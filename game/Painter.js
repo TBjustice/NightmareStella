@@ -26,7 +26,7 @@
     }
   }
 
-  Painter.prototype.resizeCanvas = function (w, h, detail = 1.5) {
+  Painter.prototype.resizeCanvas = function (w, h, detail = 1.0) {
     this.canvas.setAttribute("width", "" + w * detail + "px");
     this.canvas.setAttribute("height", "" + h * detail + "px");
     this.canvas.style.width = "" + w + "px";

@@ -114,3 +114,16 @@ function draw() {
 }
 draw();
 
+function onTouchStart(event){
+  event.preventDefault();
+}
+function onTouchMove(event){
+  event.preventDefault();
+}
+function onTouchEnd(event){
+  event.preventDefault();
+}
+
+canvas.addEventListener("touchstart", onTouchStart);
+canvas.addEventListener("touchmove", onTouchMove);
+canvas.addEventListener("touchend", onTouchEnd);
