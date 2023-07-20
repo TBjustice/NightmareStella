@@ -228,12 +228,11 @@ function draw() {
   drawNote(LONG_NOTES, 3, 6, 6, camera);
 
   drawNote(FLICK_NOTES, 3, 9, 3, camera);
-  drawNote(FLICK_NOTES, 3, 9, 9, camera);
+  drawNote(FLICK_NOTES, 4, 8, 9, camera);
 
   // Draw Flick note
   drawFlick(FLICK_BOTH, 2, 4, 5, camera)
-  drawFlick(FLICK_LEFT, 2, 4, 6, camera)
-  drawFlick(FLICK_RIGHT, 2, 4, 7, camera)
+  drawFlick(FLICK_LEFT, 4, 8, 9, camera)
 
   painter.flush();
   requestAnimationFrame(draw);
