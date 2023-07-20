@@ -2,13 +2,6 @@ const canvas = document.getElementById("canvas");
 const painter = new Painter(canvas);
 painter.disableCullFace();
 
-const TAP_NOTES = 0;
-const LONG_NOTES = 1;
-const FLICK_NOTES = 2;
-const FLICK_BOTH = 0;
-const FLICK_LEFT = 1;
-const FLICK_RIGHT = 2;
-
 /* Canvas Setup */
 
 function onWindowResized() {
@@ -83,9 +76,9 @@ for (let idx = 1; idx <= 12; idx++) {
     idx, 0.5, idx - 0.5, 0.5, 0.5, 0.5, 0.0, 0.5]));
 }
 
-function drawNote(type, size, offset, z, camera) {
+function drawNote(type, size, place, z, camera) {
   size-=1;
-  offset -= 6;
+  place -= 6;
 
   painter.setVBO("position", notes.positions[size]);
   painter.setVBO("uv", notes.uv);
@@ -93,14 +86,14 @@ function drawNote(type, size, offset, z, camera) {
   painter.setUniform("cameraMatrix", camera);
   painter.setUniform("global_alpha", 1.0);
 
-  painter.setUniform("modelMatrix", Matrix4x4.times(Matrix4x4.translation(offset, 0.01, -z), Matrix4x4.rotationX(-90)));
+  painter.setUniform("modelMatrix", Matrix4x4.times(Matrix4x4.translation(place, 0.01, -z), Matrix4x4.rotationX(-90)));
   painter.setTexture2D("image", notes.textures.note_bg);
   painter.drawElements(18);
 
-  painter.setUniform("modelMatrix", Matrix4x4.times(Matrix4x4.translation(offset, 0.07, -z), Matrix4x4.rotationX(-90)));
-  if (type == TAP_NOTES) painter.setTexture2D("image", notes.textures.note_tap);
-  else if (type == LONG_NOTES) painter.setTexture2D("image", notes.textures.note_long);
-  else if (type == FLICK_NOTES) painter.setTexture2D("image", notes.textures.note_flick);
+  painter.setUniform("modelMatrix", Matrix4x4.times(Matrix4x4.translation(place, 0.07, -z), Matrix4x4.rotationX(-90)));
+  if (type == NOTEVIEW_TAP) painter.setTexture2D("image", notes.textures.note_tap);
+  else if (type == NOTEVIEW_LONG) painter.setTexture2D("image", notes.textures.note_long);
+  else if (type == NOTEVIEW_FLICK) painter.setTexture2D("image", notes.textures.note_flick);
   painter.drawElements(18);
 }
 
@@ -111,8 +104,8 @@ const flickarrow = {
   ibo: painter.createIndexBuffer([0, 1, 2, 2, 3, 0])
 }
 
-function drawFlick(type, size, offset, z, camera) {
-  offset -= 6;
+function drawFlick(type, size, place, z, camera) {
+  place -= 6;
   painter.setVBO("position", flickarrow.position);
   painter.setVBO("uv", flickarrow.uv);
   painter.setIBO(flickarrow.ibo);
@@ -120,14 +113,14 @@ function drawFlick(type, size, offset, z, camera) {
   painter.setTexture2D("image", flickarrow.texture);
   for (let i = 0; i < 2 * size; i++) {
     painter.setUniform("global_alpha", 0.2);
-    let model = Matrix4x4.translation(offset + i * 0.25 + 0.125, 0.4, -z);
+    let model = Matrix4x4.translation(place + i * 0.25 + 0.125, 0.4, -z);
     if(type != FLICK_RIGHT)Matrix4x4.mul(model, Matrix4x4.rotationY(180));
     painter.setUniform("modelMatrix", model);
     painter.drawElements(6);
   }
   for (let i = 2 * size; i < 4 * size; i++) {
     painter.setUniform("global_alpha", 0.2);
-    let model = Matrix4x4.translation(offset + i * 0.25 + 0.125, 0.4, -z);
+    let model = Matrix4x4.translation(place + i * 0.25 + 0.125, 0.4, -z);
     if(type == FLICK_LEFT) Matrix4x4.mul(model, Matrix4x4.rotationY(180));
     painter.setUniform("modelMatrix", model);
     painter.drawElements(6);
@@ -135,7 +128,7 @@ function drawFlick(type, size, offset, z, camera) {
 }
 
 const floorRectangle = {
-  position: painter.createBuffer([-6.0, 0.0, 12.0, 6.0, 0.0, 12.0, 6.0, 0.0, -90.0, -6.0, 0.0, -90.0]),
+  position: painter.createBuffer([-6.0, 0.0, 12.0, 6.0, 0.0, 12.0, 6.0, 0.0, -120.0, -6.0, 0.0, -120.0]),
   alpha: painter.createBuffer([0.9, 0.9, 0.9, 0.9]),
 };
 const floorLine = {
@@ -177,16 +170,16 @@ let longnoteRectangle = {
   ibo: painter.createIndexBuffer([0, 1, 2, 2, 3, 0, 4, 5, 6, 6, 7, 4])
 };
 
-function drawLongNoteFloor(type, size, offset, y1, y2, camera){
+function drawLongNoteFloor(type, size, place, y1, y2, camera){
   size-=1;
-  offset -= 6;
+  place -= 6;
   painter.setVBO("position", longnoteRectangle.position);
   painter.setVBO("alpha", longnoteRectangle.alpha);
   painter.setIBO(longnoteRectangle.ibo);
-  if(type == FLICK_NOTES) painter.setUniform("color", [0.7, 0, 0.8]);
-  else if(type == LONG_NOTES) painter.setUniform("color", [0, 0.8, 0.9]);
+  if(type == NOTEVIEW_LONG) painter.setUniform("color", [0, 0.7, 0.8]);
+  else painter.setUniform("color", [0.7, 0, 0.8]);
   painter.setUniform("cameraMatrix", camera);
-  painter.setUniform("modelMatrix", Matrix4x4.times(Matrix4x4.translation(offset, 0, -y2), Matrix4x4.scale(size + 1, 0, y2-y1)));
+  painter.setUniform("modelMatrix", Matrix4x4.times(Matrix4x4.translation(place, 0, -y2), Matrix4x4.scale(size + 1, 0, y2-y1)));
   painter.drawElements(12);
 }
 
@@ -200,41 +193,3 @@ async function setup() {
   flickarrow.texture = await painter.loadImageAsTexture("image/note_flickarrow.png");
 }
 setup();
-
-let start = performance.now();
-function draw() {
-  painter.clear();
-
-  let camera = Matrix4x4.createPMatrix(45, painter.getAspect(), 0.1, 180);
-  Matrix4x4.mul(camera, Matrix4x4.createVMatrix([0, 4, 3], 0, 24, 4));
-
-  painter.useProgram(drawPolygon);
-
-  // Draw floor
-  drawFloor(camera);
-
-  // Draw long note floor
-  drawLongNoteFloor(LONG_NOTES, 3, 6, 0, 6, camera);
-  drawLongNoteFloor(FLICK_NOTES, 3, 9, 3, 9, camera);
-
-  painter.useProgram(drawImage);
-
-  // Draw notes
-  drawNote(TAP_NOTES, 1, 0, 1, camera);
-  drawNote(LONG_NOTES, 2, 0, 3, camera);
-  drawNote(FLICK_NOTES, 2, 4, 5, camera);
-
-  drawNote(LONG_NOTES, 3, 6, 0, camera);
-  drawNote(LONG_NOTES, 3, 6, 6, camera);
-
-  drawNote(FLICK_NOTES, 3, 9, 3, camera);
-  drawNote(FLICK_NOTES, 4, 8, 9, camera);
-
-  // Draw Flick note
-  drawFlick(FLICK_BOTH, 2, 4, 5, camera)
-  drawFlick(FLICK_LEFT, 4, 8, 9, camera)
-
-  painter.flush();
-  requestAnimationFrame(draw);
-}
-draw();
