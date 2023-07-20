@@ -159,5 +159,14 @@ const Matrix4x4 = {
             0,near*2/b,0,0,
             0,0,-(far+near)/c,-1,
             0,0,-(far*near*2)/c,0];
+    },
+    createPMatrix2: function (fovy = 90, aspect = 1, near = 0.1, far = 100) {
+        const t = 1 / Math.tan(fovy * Math.PI / 360);
+        const c = far - near;
+        return [
+            t,0,0,0,
+            0,t*aspect,0,0,
+            0,0,-(far+near)/c,-1,
+            0,0,-(far*near*2)/c,0];
     }
 }

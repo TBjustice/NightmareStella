@@ -1,3 +1,6 @@
+const main_select = document.getElementById("main_select");
+const main_game = document.getElementById("main_game");
+
 const canvas = document.getElementById("canvas");
 const painter = new Painter(canvas);
 painter.disableCullFace();
@@ -112,14 +115,14 @@ function drawFlick(type, size, place, z, camera) {
   painter.setUniform("cameraMatrix", camera);
   painter.setTexture2D("image", flickarrow.texture);
   for (let i = 0; i < 2 * size; i++) {
-    painter.setUniform("global_alpha", 0.2);
+    painter.setUniform("global_alpha", 0.8);
     let model = Matrix4x4.translation(place + i * 0.25 + 0.125, 0.4, -z);
     if(type != FLICK_RIGHT)Matrix4x4.mul(model, Matrix4x4.rotationY(180));
     painter.setUniform("modelMatrix", model);
     painter.drawElements(6);
   }
   for (let i = 2 * size; i < 4 * size; i++) {
-    painter.setUniform("global_alpha", 0.2);
+    painter.setUniform("global_alpha", 0.8);
     let model = Matrix4x4.translation(place + i * 0.25 + 0.125, 0.4, -z);
     if(type == FLICK_LEFT) Matrix4x4.mul(model, Matrix4x4.rotationY(180));
     painter.setUniform("modelMatrix", model);

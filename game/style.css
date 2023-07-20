@@ -3,6 +3,26 @@ body{
   padding: 0;
   overflow: hidden;
 }
+main{
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background: rgb(18,0,32);
+}
+
+#gamelist{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 30%;
+  bottom: 0;
+  overflow-x:hidden;
+  overflow-y: auto;
+  background:rgb(36, 0, 64);
+}
 
 #canvas{
   position: absolute;
