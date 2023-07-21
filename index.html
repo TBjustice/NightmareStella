@@ -4,9 +4,62 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nightmare Stella</title>
+  <style>
+    body{
+      margin: 0;
+      padding: 0;
+    }
+    header{
+      background: rgb(31, 0, 55);
+      color: white;
+    }
+    header h1{
+      margin: 0;
+    }
+    h2{
+      border-left: 4px solid blueviolet;
+      padding-left: 16px;
+    }
+    main{
+      padding: 16px;
+    }
+    .done-text{
+      color: rgb(5, 198, 5);
+    }
+    .todo-text{
+      color: rgb(101, 5, 198);
+    }
+  </style>
 </head>
 <body>
-  <p>ブラウザで遊べる音ゲーを開発中です</p>
-  <a href="game/game.html">ブラウザ版(ベータ版)</a>
+  <header>
+    <h1>Nightmare Stella</h1>
+  </header>
+  <main>
+    <h2>Nightmare Stellaとは？</h2>
+    <p>ブラウザで遊べる、オープンソースの音ゲーです。ゲームとして遊ぶことはもちろん、ゲーム開発に興味がある方は公開しておりますプログラムを読んで勉強に使って頂ければと思います。</p>
+    <p>なお、ゲームは<a href="game/game.html">こちら</a>からプレイできます。ただし、現在は開発中ですので、プレイは不可能です！また、ソースコード(プログラム)は<a href="https://github.com/TBjustice/NightmareStella/tree/main/game" target="_blank" rel="noopener noreferrer">こちら</a>に公開しています。</p>
+    <h2>注意事項</h2>
+    <p>このゲーム自体をそのまま動画配信等で使って利益を得るような行為は避けて下さい。</p>
+    <p>というのも、実はこのゲームで使われているノーツの種類や色合いはとあるゲームに似せています。もちろん、私は<b>誓って</b>元ネタのデータを抜き取るなどの行為はしていません。あくまで似たシステムを採用しているだけであり、ですので二次創作の範疇として受け入れてもらえると考えております。</p>
+    <p>しかし、乱用が過ぎるとこのサイトを消す必要が出てくる可能性があり、それは避けたいです。本サイトを多くの人がプログラムの勉強や音ゲーの練習を出来るよう、節度を守ってご利用いただければと思います。</p>
+    <h2>現在の開発状況</h2>
+    <div>
+      <span class="done-text">Done!</span>:WebGLを利用し、3D空間内でノーツを描画/移動できるようにする。<br>
+      <span class="done-text">Done!</span>:画面幅（縦横比）によらず遊べるように、カメラの行列を工夫する。<br>
+      <span class="done-text">Done!</span>:様々なパラメータをプログラムを少し書き換えるだけで調節出来るようにする。<br>
+      <span class="done-text">Done!</span>:タップ・フリックを検出できるようにする。<br>
+      <span class="todo-text">To Do</span>:ノーツの判定を実装する。<br>
+      <span class="todo-text">To Do</span>:判定結果の表示、およびコンボ数の表示を行う。<br>
+      <span class="todo-text">To Do</span>:パラメータを調節出来るようなUIを作る。<br>
+      <span class="todo-text">To Do</span>:譜面作成ツールを作る。<br>
+      <span class="todo-text">To Do</span>:作った譜面のエラー（ロングノーツ中にそのレーンにタップノーツがある、など）を検出できるようにする。<br>
+      <span class="todo-text">To Do</span>:どの譜面で遊ぶか選択し、その譜面で遊べるようにする。<br>
+      <span class="todo-text">To Do</span>:タップの早い/遅いをグラフ化して表示できるようにする。<br>
+      <span class="todo-text">To Do</span>:楽曲と連動できるようにする。<br>
+      <span class="todo-text">To Do</span>:譜面作成ツールに楽曲の波形を表示できるようにする。<br>
+      <span class="todo-text">To Do</span>:<span style="font-size: 0.5rem;">元ネタとなったゲームに課金する</span><br>
+    </div>
+  </main>
 </body>
 </html>
