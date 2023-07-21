@@ -103,17 +103,17 @@ Note.prototype.needFlickIcon = function(){
 }
 
 const GameSetting = {
-  // place[m] = speed[m/ms] * time[ms]
+  /** place[m] = speed[m/ms] * time[ms] */
   speed:0.050,
-  // lane degree
+  /** lane degree */
   upper:1/7,
-  // place of judge-line
+  /** place of judge-line */
   judge:0.7,
-  // place of notes-appear place
+  /** place of notes-appear place */
   appear:0.9,
-  // note visible time[ms]
+  /** note visible time[ms] */
   visibleTime:1,
-  // Camera beta
+  /** Camera beta */
   beta:25,
   // Others
   displayRange:[-5, 100],
@@ -153,6 +153,8 @@ function Game(){
   this.notes = [];
   this.delay = 0;
   this.start = 0;
+  
+  this.touchBind = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
 }
 Game.prototype.setNotes = function(notes){
   this.notes = notes;
@@ -222,21 +224,20 @@ Game.prototype.draw = function(){
   }
   painter.flush();
 }
-Game.prototype.tap = function(x, y){
+
+Game.prototype.tap = function(id, x, y){
   const time = performance.now() - this.start - this.delay;
   for (const note of this.notes) {
     let deltaTime = (note.time - time);
-    if(deltaTime){
-      drawNote(note.getSkin(), note.width, note.place, z, camera);
-    }
+    
   }
-  console.log("tap", x * 8, y);
+  console.log("tap", id, x * 8, y);
 }
-Game.prototype.flick = function(x, y, speedx, speedy){
-  console.log("flick", x * 8, y, speedx, speedy);
+Game.prototype.flick = function(id, x, y, speedx, speedy){
+  console.log("flick", id, x * 8, y, speedx, speedy);
 }
-Game.prototype.release = function(x, y){
-  console.log("release", x * 8, y);
+Game.prototype.release = function(id, x, y){
+  console.log("release", id, x * 8, y);
 }
 
 let game = new Game();
@@ -282,7 +283,7 @@ function onTouchStart(event){
     touchHistory[id].x = change.pageX / painter.framesize[0];
     touchHistory[id].y = (painter.framesize[1] - change.pageY) / painter.framesize[0];
     touchHistory[id].time = performance.now() / 1000;
-    game.tap(touchHistory[id].x, touchHistory[id].y);
+    game.tap(id, touchHistory[id].x, touchHistory[id].y);
   }
 }
 function onTouchMove(event){
@@ -292,16 +293,16 @@ function onTouchMove(event){
     const id=change.identifier;
     const cx = change.pageX / painter.framesize[0];
     const cy = (painter.framesize[1] - change.pageY) / painter.framesize[0];
-    const ct = performance.now();
+    const ct = performance.now() / 1000;
     const dx = cx - touchHistory[id].x;
     const dy = cy - touchHistory[id].y;
     const dt = ct - touchHistory[id].time;
     if(Math.sqrt(dx * dx + dy * dy) / dt > 1){
-      game.flick(cx, cy, dx / dt, dy/dt);
+      game.flick(id, cx, cy, dx / dt, dy/dt);
     }
     touchHistory[id].x = cx;
     touchHistory[id].y = cy;
-    touchHistory[id].time = ct/ 1000;
+    touchHistory[id].time = ct;
   }
 }
 function onTouchEnd(event){
@@ -311,7 +312,7 @@ function onTouchEnd(event){
     const id=change.identifier;
     const cx = change.pageX / painter.framesize[0];
     const cy = (painter.framesize[1] - change.pageY) / painter.framesize[0];
-    game.release(cx, cy);
+    game.release(id, cx, cy);
     touchHistory[id].x = 0;
     touchHistory[id].y = 0;
     touchHistory[id].time = 0;
