@@ -5,16 +5,6 @@ const canvas = document.getElementById("canvas");
 const painter = new Painter(canvas);
 painter.disableCullFace();
 
-/* Canvas Setup */
-
-function onWindowResized() {
-  let width = window.innerWidth;
-  let height = window.innerHeight;
-  painter.resizeCanvas(width, height);
-}
-window.addEventListener("resize", onWindowResized)
-onWindowResized();
-
 /* Shader Setup */
 
 let drawImage = painter.createProgram([`
