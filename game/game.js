@@ -258,10 +258,6 @@ game.start = performance.now();
 
 function draw() {
   game.draw();
-
-  if(time > 10*1000) {
-    start = performance.now();
-  }
   requestAnimationFrame(draw);
 }
 
