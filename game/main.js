@@ -84,9 +84,9 @@ function drawNote(type, size, place, z, camera) {
   painter.drawElements(18);
 
   painter.setUniform("modelMatrix", Matrix4x4.times(Matrix4x4.translation(place, 0.07, -z), Matrix4x4.rotationX(-90)));
-  if (type == NOTEVIEW_TAP) painter.setTexture2D("image", notes.textures.note_tap);
-  else if (type == NOTEVIEW_LONG) painter.setTexture2D("image", notes.textures.note_long);
-  else if (type == NOTEVIEW_FLICK) painter.setTexture2D("image", notes.textures.note_flick);
+  if (type == NOTESKIN_TAP) painter.setTexture2D("image", notes.textures.note_tap);
+  else if (type == NOTESKIN_LONG) painter.setTexture2D("image", notes.textures.note_long);
+  else if (type == NOTESKIN_FLICK) painter.setTexture2D("image", notes.textures.note_flick);
   painter.drawElements(18);
 }
 
@@ -169,7 +169,7 @@ function drawLongNoteFloor(type, size, place, y1, y2, camera){
   painter.setVBO("position", longnoteRectangle.position);
   painter.setVBO("alpha", longnoteRectangle.alpha);
   painter.setIBO(longnoteRectangle.ibo);
-  if(type == NOTEVIEW_LONG) painter.setUniform("color", [0, 0.7, 0.8]);
+  if(type == NOTESKIN_LONG) painter.setUniform("color", [0, 0.7, 0.8]);
   else painter.setUniform("color", [0.7, 0, 0.8]);
   painter.setUniform("cameraMatrix", camera);
   painter.setUniform("modelMatrix", Matrix4x4.times(Matrix4x4.translation(place, 0, -y2), Matrix4x4.scale(size + 1, 0, y2-y1)));
