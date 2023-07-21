@@ -104,7 +104,7 @@ Note.prototype.needFlickIcon = function(){
 
 const GameSetting = {
   /** place[m] = speed[m/ms] * time[ms] */
-  speed:0.050,
+  speed:0.020,
   /** lane degree */
   upper:1/7,
   /** place of judge-line */
@@ -115,6 +115,8 @@ const GameSetting = {
   visibleTime:1,
   /** Camera beta */
   beta:25,
+  /** judgements */
+  judgeTiming:[40, 80, 160],
   // Others
   displayRange:[-5, 100],
   camera:Matrix4x4.eye(),
@@ -149,82 +151,156 @@ const GameSetting = {
   }
 }
 
-function Game(){
-  this.notes = [];
-  this.delay = 0;
-  this.start = 0;
-  
-  this.touchBind = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
-}
-Game.prototype.setNotes = function(notes){
-  this.notes = notes;
-  this.notes.sort((a, b)=>a.time - b.time);
-  let nnotes = this.notes.length;
-  for(let idx=0;idx<nnotes;idx++){
-    const note = this.notes[idx];
-    if(note.connectTime !== null){
-      note.connectTo = -1;
-      for (let idx2=idx+1;idx2<nnotes;idx2++) {
-        const it = this.notes[idx2];
-        if(it.time == note.connectTime && it.place == note.connectPlace){
-          note.connectTo = idx2;
-          it.connectFrom = idx;
-          if(it.place < note.place && it.place + it.width <= note.place + note.width)it.flick = FLICK_LEFT;
-          else if(it.place >= note.place && it.place + it.width > note.place + note.width)it.flick = FLICK_RIGHT;
-          else it.flick = FLICK_BOTH;
-          break;
+const Game = {
+  notes:[],
+  delay:0,
+  start:0,
+  touchHistory:[],
+  setNotes:function(notes){
+    this.notes = notes;
+    this.notes.sort((a, b)=>a.time - b.time);
+    let nnotes = this.notes.length;
+    for(let idx=0;idx<nnotes;idx++){
+      const note = this.notes[idx];
+      if(note.connectTime !== null){
+        note.connectTo = -1;
+        for (let idx2=idx+1;idx2<nnotes;idx2++) {
+          const it = this.notes[idx2];
+          if(it.time == note.connectTime && it.place == note.connectPlace){
+            note.connectTo = idx2;
+            it.connectFrom = idx;
+            if(it.place < note.place && it.place + it.width <= note.place + note.width)it.flick = FLICK_LEFT;
+            else if(it.place >= note.place && it.place + it.width > note.place + note.width)it.flick = FLICK_RIGHT;
+            else it.flick = FLICK_BOTH;
+            break;
+          }
+        }
+        if(note.connectTo < 0)console.error("Connection not found!");
+      }
+      
+      if(note.connectTo >= 0){
+        if(note.connectFrom < 0) note.judgeType = note.type == NOTETYPE_TAP ? NOTETYPE_LONGSTART : NOTETYPE_LONGFLICKSTART;
+        else note.judgeType = note.type == NOTETYPE_TAP ? NOTETYPE_TAPINKEEP : NOTETYPE_FLICKINKEEP;
+      }
+      else{
+        if(note.connectFrom < 0) note.judgeType = note.type;
+        else note.judgeType = note.type == NOTETYPE_TAP ? NOTETYPE_LONGEND : NOTETYPE_LONGFLICKEND;
+      }
+    }
+  },
+  findNote:function(time, x, typeFilter = null){
+    let nnotes = this.notes.length;
+    for(let idx=0;idx<nnotes;idx++){
+      const note = this.notes[idx];
+      if(note.state != NOTESTATE_NONE)continue;
+      if(Math.abs(time - note.time) < GameSetting.judgeTiming[2]){
+        let xMin = note.place;
+        let xMax = note.place + note.width;
+        if(note.width == 1){
+          xMin-=1;
+          xMax+=1;
+        }
+        else if(note.width == 2){
+          xMin-=0.5;
+          xMax+=0.5;
+        }
+        if(xMin < x && x < xMax && (typeFilter===null || typeFilter.includes(note.judgeType))) return idx;
+      }
+    }
+    return -1;
+  },
+  onTap:function(id, idx){
+    this.notes[idx].state = NOTESTATE_DONE;//To Do
+    console.log("Tap", idx);
+    this.touchHistory[id].bind.push(idx);
+    while(this.notes[idx].connectTo >= 0){
+      idx = this.notes[idx].connectTo;
+      this.touchHistory[id].bind.push(idx);
+    }
+  },
+  draw:function(){
+    const time = performance.now() - this.start - this.delay;
+    painter.clear();
+    painter.useProgram(drawPolygon);
+    // Draw floor
+    drawFloor(GameSetting.camera);
+    // Draw long note floor
+    for (const note of this.notes) {
+      if(note.hasLongnoteFloor()){
+        let start = (note.time - time) * GameSetting.speed;
+        let end = start + (note.connectTime - note.time) * GameSetting.speed;
+        if(start < GameSetting.displayRange[1] && end > GameSetting.displayRange[0]){
+          drawLongNoteFloor(note.type == NOTETYPE_TAP ? NOTESKIN_LONG : NOTESKIN_FLICK, note.width, note.place, start, end, GameSetting.camera);
         }
       }
-      if(note.connectTo < 0)console.error("Connection not found!");
     }
-    
-    if(note.connectTo >= 0){
-      if(note.connectFrom < 0) note.judgeType = note.type == NOTETYPE_TAP ? NOTETYPE_LONGSTART : NOTETYPE_LONGFLICKSTART;
-      else note.judgeType = note.type == NOTETYPE_TAP ? NOTETYPE_TAPINKEEP : NOTETYPE_FLICKINKEEP;
-    }
-    else{
-      if(note.connectFrom < 0) note.judgeType = note.type;
-      else note.judgeType = note.type == NOTETYPE_TAP ? NOTETYPE_LONGEND : NOTETYPE_LONGFLICKEND;
-    }
-  }
-}
-Game.prototype.draw = function(){
-  const camera = GameSetting.camera;
-  const time = performance.now() - this.start - this.delay;
-  painter.clear();
-  painter.useProgram(drawPolygon);
-  // Draw floor
-  drawFloor(camera);
-  // Draw long note floor
-  for (const note of this.notes) {
-    if(note.hasLongnoteFloor()){
-      let start = (note.time - time) * GameSetting.speed;
-      let end = start + (note.connectTime - note.time) * GameSetting.speed;
-      if(start < GameSetting.displayRange[1] && end > GameSetting.displayRange[0]){
-        drawLongNoteFloor(note.type == NOTETYPE_TAP ? NOTESKIN_LONG : NOTESKIN_FLICK, note.width, note.place, start, end, camera);
+    // Draw notes
+    painter.useProgram(drawImage);
+    for (const note of this.notes) {
+      let z = (note.time - time) * GameSetting.speed;
+      if(z < GameSetting.displayRange[1] && z > GameSetting.displayRange[0]){
+        if(note.state != NOTESTATE_DONE) drawNote(note.getSkin(), note.width, note.place, z, GameSetting.camera);
       }
     }
-  }
-  // Draw notes
-  painter.useProgram(drawImage);
-  for (const note of this.notes) {
-    let z = (note.time - time) * GameSetting.speed;
-    if(z < GameSetting.displayRange[1] && z > GameSetting.displayRange[0]){
-      drawNote(note.getSkin(), note.width, note.place, z, camera);
-    }
-  }
-  // Draw Flick note
-  for (const note of this.notes) {
-    let z = (note.time - time) * GameSetting.speed;
-    if(z < GameSetting.displayRange[1] && z > GameSetting.displayRange[0]){
-      if(note.needFlickIcon()){
-        drawFlick(note.flick, note.width, note.place, z, camera)
+    // Draw Flick note
+    for (const note of this.notes) {
+      let z = (note.time - time) * GameSetting.speed;
+      if(z < GameSetting.displayRange[1] && z > GameSetting.displayRange[0]){
+        if(note.needFlickIcon()){
+          drawFlick(note.flick, note.width, note.place, z, GameSetting.camera)
+        }
       }
     }
-  }
-  painter.flush();
-}
+    painter.flush();
 
+    for(let i=0;i<10;i++) {
+      if(this.touchHistory[i].time > 0 && this.touchHistory[i].bind.length == 0){
+        let touch = this.touchHistory[i].x * 12;
+        let idx = this.findNote(time, touch, [NOTETYPE_TAPINKEEP, NOTETYPE_LONGEND, NOTETYPE_FLICKINKEEP, NOTETYPE_LONGFLICKEND]);
+        if(idx >= 0)this.onTap(i, idx);
+      }
+    }
+  },
+  initTouchHistory:function(){
+    for(let i=0;i<10;i++) this.touchHistory.push({x:0,y:0,time:0,bind:[]});
+  },
+  onTouchStart:function(id, x, y){
+    const ct = performance.now();
+    this.touchHistory[id].x = x;
+    this.touchHistory[id].y = y;
+    this.touchHistory[id].time = ct;
+    
+    const time = performance.now() - this.start - this.delay;
+    let touch = x * 12;
+    let idx = this.findNote(time, touch);
+    if(idx >= 0){
+      this.onTap(id, idx);
+    }
+  },
+  onTouchMove:function(id, x, y){
+    const ct = performance.now();
+    const dx = x - this.touchHistory[id].x;
+    const dy = y - this.touchHistory[id].y;
+    const dt = (ct - this.touchHistory[id].time) / 1000;
+    if(Math.sqrt(dx * dx + dy * dy) / dt > 1){
+      console.log("flick", id, x, y, dx / dt, dy / dt);
+      //game.flick(id, cx, cy, dx / dt, dy/dt);
+    }
+    this.touchHistory[id].x = x;
+    this.touchHistory[id].y = y;
+    this.touchHistory[id].time = ct;
+  },
+  onTouchEnd:function(id, x, y){
+    console.log("release", id, x, y);
+    this.touchHistory[id].x = 0;
+    this.touchHistory[id].y = 0;
+    this.touchHistory[id].time = 0;
+    this.touchHistory[id].bind = [];
+  }
+}
+Game.initTouchHistory();
+
+/*
 Game.prototype.tap = function(id, x, y){
   const time = performance.now() - this.start - this.delay;
   for (const note of this.notes) {
@@ -239,9 +315,9 @@ Game.prototype.flick = function(id, x, y, speedx, speedy){
 Game.prototype.release = function(id, x, y){
   console.log("release", id, x * 8, y);
 }
+*/
 
-let game = new Game();
-game.setNotes([
+Game.setNotes([
   new Note(0, 0, 1, NOTETYPE_TAP),
   new Note(1000, 0, 2, NOTETYPE_TAP),
   new Note(2000, 0, 3, NOTETYPE_FLICK),
@@ -254,11 +330,11 @@ game.setNotes([
   new Note(3000, 0, 3, NOTETYPE_TAP, 5000, 0),
   new Note(5000, 0, 3, NOTETYPE_TAP),
 ]);
-game.delay = 3000;
-game.start = performance.now();
+Game.delay = 3000;
+Game.start = performance.now();
 
 function draw() {
-  game.draw();
+  Game.draw();
   requestAnimationFrame(draw);
 }
 
@@ -271,19 +347,14 @@ function onWindowResized() {
 window.addEventListener("resize", onWindowResized);
 onWindowResized();
 
-const touchHistory=[];
-for(let i=0;i<10;i++){
-  touchHistory.push({x:0,y:0,time:0});
-}
 function onTouchStart(event){
   event.preventDefault();
   const changes = event.changedTouches;
   for(const change of changes){
     const id=change.identifier;
-    touchHistory[id].x = change.pageX / painter.framesize[0];
-    touchHistory[id].y = (painter.framesize[1] - change.pageY) / painter.framesize[0];
-    touchHistory[id].time = performance.now() / 1000;
-    game.tap(id, touchHistory[id].x, touchHistory[id].y);
+    const x = change.pageX / painter.framesize[0];
+    const y = (painter.framesize[1] - change.pageY) / painter.framesize[0];
+    Game.onTouchStart(id, x, y);
   }
 }
 function onTouchMove(event){
@@ -291,18 +362,9 @@ function onTouchMove(event){
   const changes = event.changedTouches;
   for(const change of changes){
     const id=change.identifier;
-    const cx = change.pageX / painter.framesize[0];
-    const cy = (painter.framesize[1] - change.pageY) / painter.framesize[0];
-    const ct = performance.now() / 1000;
-    const dx = cx - touchHistory[id].x;
-    const dy = cy - touchHistory[id].y;
-    const dt = ct - touchHistory[id].time;
-    if(Math.sqrt(dx * dx + dy * dy) / dt > 1){
-      game.flick(id, cx, cy, dx / dt, dy/dt);
-    }
-    touchHistory[id].x = cx;
-    touchHistory[id].y = cy;
-    touchHistory[id].time = ct;
+    const x = change.pageX / painter.framesize[0];
+    const y = (painter.framesize[1] - change.pageY) / painter.framesize[0];
+    Game.onTouchMove(id, x, y);
   }
 }
 function onTouchEnd(event){
@@ -310,15 +372,11 @@ function onTouchEnd(event){
   const changes = event.changedTouches;
   for(const change of changes){
     const id=change.identifier;
-    const cx = change.pageX / painter.framesize[0];
-    const cy = (painter.framesize[1] - change.pageY) / painter.framesize[0];
-    game.release(id, cx, cy);
-    touchHistory[id].x = 0;
-    touchHistory[id].y = 0;
-    touchHistory[id].time = 0;
+    const x = change.pageX / painter.framesize[0];
+    const y = (painter.framesize[1] - change.pageY) / painter.framesize[0];
+    Game.onTouchEnd(id, x, y);
   }
 }
-
 canvas.addEventListener("touchstart", onTouchStart);
 canvas.addEventListener("touchmove", onTouchMove);
 canvas.addEventListener("touchend", onTouchEnd);
