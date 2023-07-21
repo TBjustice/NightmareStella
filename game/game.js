@@ -188,7 +188,7 @@ const Game = {
       }
     }
   },
-  findNote:function(time, x, typeFilter = null){
+  findNote:function(time, x, interrupt = false){
     let nnotes = this.notes.length;
     for(let idx=0;idx<nnotes;idx++){
       const note = this.notes[idx];
@@ -204,7 +204,7 @@ const Game = {
           xMin-=0.5;
           xMax+=0.5;
         }
-        if(xMin < x && x < xMax && (typeFilter===null || typeFilter.includes(note.judgeType))) return idx;
+        if(xMin < x && x < xMax && (!interrupt || canInterrupt(note.judgeType))) return idx;
       }
     }
     return -1;
@@ -254,11 +254,13 @@ const Game = {
     painter.flush();
 
     for(let i=0;i<10;i++) {
-      if(this.touchHistory[i].time > 0 && this.touchHistory[i].bind.length == 0){
+      if(this.touchHistory[i].time == 0)continue;
+      if(this.touchHistory[i].bind.length == 0){
         let touch = this.touchHistory[i].x * 12;
-        let idx = this.findNote(time, touch, [NOTETYPE_TAPINKEEP, NOTETYPE_LONGEND, NOTETYPE_FLICKINKEEP, NOTETYPE_LONGFLICKEND]);
+        let idx = this.findNote(time, touch, true);
         if(idx >= 0)this.onTap(i, idx);
       }
+      
     }
   },
   initTouchHistory:function(){

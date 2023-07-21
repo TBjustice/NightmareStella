@@ -5,11 +5,15 @@ const NOTESKIN_FLICK = 2;
 const NOTETYPE_TAP = 0;
 const NOTETYPE_FLICK = 1;
 const NOTETYPE_LONGSTART = 2;
-const NOTETYPE_TAPINKEEP = 3;
-const NOTETYPE_LONGEND = 4;
-const NOTETYPE_LONGFLICKSTART = 5;
+const NOTETYPE_LONGFLICKSTART = 3;
+const NOTETYPE_TAPINKEEP = 4;
+const NOTETYPE_LONGEND = 5;
 const NOTETYPE_FLICKINKEEP = 6;
 const NOTETYPE_LONGFLICKEND = 7;
+
+function canInterrupt(notetype){
+  return notetype >= NOTETYPE_TAPINKEEP;
+}
 
 const FLICK_BOTH = 0;
 const FLICK_LEFT = 1;
