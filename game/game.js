@@ -567,16 +567,20 @@ function gameStart(){
   document.getElementById("main_game").hidden = false;
   Game.setNotes([
     new Note(0, 0, 1, NOTETYPE_TAP),
-    new Note(1000, 0, 2, NOTETYPE_TAP),
-    new Note(2000, 0, 3, NOTETYPE_FLICK),
-    new Note(0, 11, 1, NOTETYPE_TAP),
-    new Note(1000, 10, 2, NOTETYPE_TAP),
-    new Note(2000, 9, 3, NOTETYPE_FLICK),
+    new Note(500, 2, 2, NOTETYPE_TAP),
+    new Note(1000, 3, 3, NOTETYPE_FLICK),
+    new Note(1000, 9, 3, NOTETYPE_TAP),
+    new Note(1500, 6, 3, NOTETYPE_TAP),
+    new Note(2000, 6, 6, NOTETYPE_FLICK),
     new Note(3000, 6, 3, NOTETYPE_FLICK, 4000, 6),
     new Note(4000, 6, 3, NOTETYPE_FLICK, 5000, 9),
-    new Note(5000, 9, 3, NOTETYPE_FLICK),
+    new Note(5000, 9, 3, NOTETYPE_FLICK, 5500, 6),
+    new Note(5500, 6, 3, NOTETYPE_FLICK, 6000, 6),
+    new Note(6000, 6, 3, NOTETYPE_FLICK),
     new Note(3000, 0, 3, NOTETYPE_TAP, 5000, 0),
     new Note(5000, 0, 3, NOTETYPE_TAP),
+    new Note(5500, 0, 6, NOTETYPE_TAP),
+    new Note(6000, 0, 6, NOTETYPE_TAP)
   ]);
   Game.delay = 3000;
   Game.start = performance.now();
