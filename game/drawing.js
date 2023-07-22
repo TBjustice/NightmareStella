@@ -1,9 +1,3 @@
-const main_home = document.getElementById("main_home");
-const main_editor = document.getElementById("main_editor");
-const main_game = document.getElementById("main_game");
-const gametouch_dummyelement = document.getElementById("gametouch_dummyelement");
-
-const canvas = document.getElementById("canvas");
 const painter = new Painter(canvas);
 painter.disableCullFace();
 

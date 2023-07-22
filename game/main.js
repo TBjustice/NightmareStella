@@ -2,7 +2,7 @@
 Nightmare Stellaのルール
 
 1 ノーツの扱い
-  Nightmare Scriptではノーツを8種類(Tap, Flick, LongStart, TapInKeep, LongEnd, FlickInKeep, LongFlickStart, LongFlickEnd)に分けています。
+  Nightmareではノーツを8種類(Tap, Flick, LongStart, TapInKeep, LongEnd, FlickInKeep, LongFlickStart, LongFlickEnd)に分けています。
   1.1 Tap
     タップノーツです。判定は画面を押した瞬間になされます。
   
@@ -517,17 +517,6 @@ function draw() {
   if(Game.draw()) requestAnimationFrame(draw);
   else gameEnd();
 }
-
-function onWindowResized() {
-  let width = window.innerWidth;
-  let height = window.innerHeight;
-  gametouch_dummyelement.style.width = width + "px";
-  gametouch_dummyelement.style.height = height + "px";
-  painter.resizeCanvas(width, height);
-  GameSetting.update(1);
-}
-window.addEventListener("resize", onWindowResized);
-onWindowResized();
 
 function onTouchStart(event){
   event.preventDefault();

@@ -13,13 +13,13 @@
       <div>
         <header>デバッグ用譜面</header>
         <p>デバッグ用の譜面です。</p>
-        <div><button>Edit</button><button onclick="gameStart(0)">Play</button></div>
+        <div><button onclick="editStart(0)">Edit</button><button onclick="gameStart(0)">Play</button></div>
       </div>
     </div>
   </main>
 
   <main id="main_editor" hidden>
-
+    <canvas id="editor_canvas"></canvas>
   </main>
 
   <main id="main_game" hidden>
@@ -33,5 +33,6 @@
   <script src="constants.js"></script>
   <script src="drawing.js"></script>
   <script src="main.js"></script>
+  <script src="editor.js"></script>
 </body>
 </html>

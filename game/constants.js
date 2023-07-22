@@ -36,3 +36,13 @@ const JUDGE_SLOW = 6;
 const JUDGE_MISS = 7;
 
 const judgeText = ["Fast", "Good fast", "Perfect", "Super", "Perfect", "Good slow", "Slow", "Miss"];
+
+const main_home = document.getElementById("main_home");
+const main_editor = document.getElementById("main_editor");
+const main_game = document.getElementById("main_game");
+const gametouch_dummyelement = document.getElementById("gametouch_dummyelement");
+
+const canvas = document.getElementById("canvas");
+
+const editor_canvas = document.getElementById("editor_canvas");
+

@@ -89,6 +89,12 @@ main{
   font-size: 1rem;
 }
 
+/* Editor */
+
+#editor_canvas{
+  position: absolute;
+}
+
 /* Game */
 
 #main_game{
