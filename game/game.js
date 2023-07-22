@@ -225,7 +225,6 @@ Note.prototype.flick = function(time){
     else return JUDGE_SLOW;
   }
   else if(this.judgeType == NOTETYPE_FLICKINKEEP || this.judgeType == NOTETYPE_LONGFLICKEND) {
-    console.log(delta);
     if(delta < -GameSetting.judgeTiming[0]){
       this.state = NOTESTATE_FLICKING;
       if(delta < -GameSetting.judgeTiming[2])this.tempJudge = JUDGE_FAST;
@@ -265,7 +264,7 @@ const GameSetting = {
   /** lane degree */
   upper:1/7,
   /** place of judge-line */
-  judge:0.5,
+  judge:0.6,
   /** place of notes-appear place */
   appear:0.9,
   /** note visible time[ms] */
@@ -486,7 +485,7 @@ const Game = {
       this.showJudge(judge);
     }
 
-    if(Math.sqrt(dx * dx + dy * dy) / dt > 0.5){
+    if(Math.sqrt(dx * dx + dy * dy) / dt > 0.05){
       for(const bind of this.touchHistory[id].bind){
         if(this.notes[bind].state == NOTESTATE_DONE)continue;
         const judge = this.notes[bind].flick(time + this.judgeDelta);
