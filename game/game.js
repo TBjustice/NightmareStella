@@ -283,7 +283,7 @@ const GameSetting = {
     const depth = 6 * (Sy2/Sx2 - Sy1/Sx1) / (sinb * aspect);
     this.visibleTime = depth / this.speed;
 
-    const far=depth;
+    const far=depth / cosb;
     const tan_halffovy = 6 * (1/Sx2 - 1/Sx1) / (depth * cosb);
     const a = -6/(tan_halffovy*Sx1);
     const b = 6*Sy1/(aspect * Sx1);
@@ -571,7 +571,7 @@ function gameStart(){
     new Note(2000, 0, 3, NOTETYPE_FLICK),
     new Note(0, 11, 1, NOTETYPE_TAP),
     new Note(1000, 10, 2, NOTETYPE_TAP),
-    new Note(2000, 9, 3, NOTETYPE_FLICK, null, null, FLICK_LEFT),
+    new Note(2000, 9, 3, NOTETYPE_FLICK),
     new Note(3000, 6, 3, NOTETYPE_FLICK, 4000, 6),
     new Note(4000, 6, 3, NOTETYPE_FLICK, 5000, 9),
     new Note(5000, 9, 3, NOTETYPE_FLICK),
