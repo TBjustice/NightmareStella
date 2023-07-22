@@ -26,13 +26,13 @@ const NOTESTATE_FLICKING = 3;
 const NOTESTATE_DONE = 4;
 
 const JUDGE_UNKNOWN = -1;
-const JUDGE_MISS = 0;
-const JUDGE_FAST = 1;
-const JUDGE_SLOW = 2;
-const JUDGE_GOOD_FAST = 3;
-const JUDGE_GOOD_SLOW = 4;
-const JUDGE_PERFECT_FAST = 5;
-const JUDGE_PERFECT_SLOW = 6;
-const JUDGE_SUPER = 7;
+const JUDGE_FAST = 0;
+const JUDGE_GOOD_FAST = 1;
+const JUDGE_PERFECT_FAST = 2;
+const JUDGE_SUPER = 3;
+const JUDGE_PERFECT_SLOW = 4;
+const JUDGE_GOOD_SLOW = 5;
+const JUDGE_SLOW = 6;
+const JUDGE_MISS = 7;
 
-const judgeText = ["Miss", "Fast", "Slow", "Good fast", "Good slow", "Perfect", "Perfect", "Super"];
+const judgeText = ["Fast", "Good fast", "Perfect", "Super", "Perfect", "Good slow", "Slow", "Miss"];
