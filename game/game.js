@@ -436,11 +436,15 @@ const Game = {
       else this.judgeOpacity-=0.03;
     }
     
+    
     for (const note of this.notes) {
       if(note.state == NOTESTATE_DONE)continue;
-      const judge = note.release(time);
-      this.showJudge(judge);
+      if((time + this.judgeDelta) - note.time > GameSetting.judgeTiming[3]){
+        const judge = note.release(time);
+        this.showJudge(judge);
+      }
     }
+    
   },
   initTouchHistory:function(){
     for(let i=0;i<10;i++) this.touchHistory.push({x:0,y:0,time:0,bind:[]});
