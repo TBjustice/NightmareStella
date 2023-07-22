@@ -49,21 +49,44 @@ main{
   }
 }
 
-#chart_list > .card{
+#chart_list > div{
   background: white;
   box-shadow: 1px 1px 4px 0px rgba(0,0,0,0.5);
-  aspect-ratio: 16 / 9;
+  height: fit-content;
   grid-column: span 2;
 }
 @media (min-width: 800px) {
-  #chart_list > .card {
+  #chart_list > div {
     grid-column: span 4;
   }
 }
 @media (min-width: 1200px) {
-  #chart_list > .card {
+  #chart_list > div {
     grid-column: span 3;
   }
+}
+
+#chart_list > div > header{
+  background: #0ff;
+  text-align: center;
+  font-size: 1.5rem;
+}
+#chart_list > div > p{
+  margin: 0.5rem;
+}
+#chart_list > div > div{
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 0.5rem;
+}
+#chart_list > div > div > button{
+  appearance: none;
+  border: 0;
+  border-radius: 5px;
+  background: #3270ed;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
 }
 
 /* Game */
