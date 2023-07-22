@@ -502,7 +502,7 @@ const Game = {
   onTouchEnd:function(id, x, y){
     for(const bind of this.touchHistory[id].bind){
       if(this.notes[bind].state == NOTESTATE_DONE)continue;
-      const judge = this.notes[bind].release(time);
+      const judge = this.notes[bind].release();
       this.showJudge(judge);
     }
     this.touchHistory[id].x = 0;
@@ -521,6 +521,8 @@ function draw() {
 function onWindowResized() {
   let width = window.innerWidth;
   let height = window.innerHeight;
+  gametouch_dummyelement.style.width = width + "px";
+  gametouch_dummyelement.style.height = height + "px";
   painter.resizeCanvas(width, height);
   GameSetting.update(1);
 }
@@ -557,14 +559,14 @@ function onTouchEnd(event){
     Game.onTouchEnd(id, x, y);
   }
 }
-canvas.addEventListener("touchstart", onTouchStart);
-canvas.addEventListener("touchmove", onTouchMove);
-canvas.addEventListener("touchend", onTouchEnd);
+gametouch_dummyelement.addEventListener("touchstart", onTouchStart);
+gametouch_dummyelement.addEventListener("touchmove", onTouchMove);
+gametouch_dummyelement.addEventListener("touchend", onTouchEnd);
 
 function gameStart(){
-  document.getElementById("main_home").hidden = true;
-  document.getElementById("main_editor").hidden = true;
-  document.getElementById("main_game").hidden = false;
+  main_home.hidden = true;
+  main_editor.hidden = true;
+  main_game.hidden = false;
   Game.setNotes([
     new Note(0, 0, 1, NOTETYPE_TAP),
     new Note(500, 2, 2, NOTETYPE_TAP),
@@ -588,7 +590,7 @@ function gameStart(){
 }
 
 function gameEnd(){
-  document.getElementById("main_home").hidden = false;
-  document.getElementById("main_editor").hidden = true;
-  document.getElementById("main_game").hidden = true;
+  main_home.hidden = false;
+  main_editor.hidden = true;
+  main_game.hidden = true;
 }

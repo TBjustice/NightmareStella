@@ -108,3 +108,7 @@ main{
   color: white;
   font-size: 1.5rem;
 }
+
+#gametouch_dummyelement{
+  position: absolute;
+}
