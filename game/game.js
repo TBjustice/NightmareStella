@@ -265,7 +265,7 @@ const GameSetting = {
   /** lane degree */
   upper:1/7,
   /** place of judge-line */
-  judge:0.7,
+  judge:0.5,
   /** place of notes-appear place */
   appear:0.9,
   /** note visible time[ms] */
@@ -471,9 +471,11 @@ const Game = {
     const dy = y - this.touchHistory[id].y;
     const dt = (ct - this.touchHistory[id].time) / 1000;
     const time = ct - this.start - this.delay;
+
     this.touchHistory[id].x = x;
     this.touchHistory[id].y = y;
     this.touchHistory[id].time = ct;
+
     if(this.touchHistory[id].bind.length == 0){
       let idx = this.findNote(time + this.judgeDelta, this.touchHistory[id].x, this.touchHistory[id].y, true);
       if(idx >= 0)this.onTap(time + this.judgeDelta, id, idx);
@@ -483,7 +485,7 @@ const Game = {
       const judge = this.notes[bind].keep(time + this.judgeDelta);
       this.showJudge(judge);
     }
-    console.log(time + this.judgeDelta);
+
     if(Math.sqrt(dx * dx + dy * dy) / dt > 0.5){
       for(const bind of this.touchHistory[id].bind){
         if(this.notes[bind].state == NOTESTATE_DONE)continue;
