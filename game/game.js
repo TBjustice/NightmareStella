@@ -225,6 +225,7 @@ Note.prototype.flick = function(time){
     else return JUDGE_SLOW;
   }
   else if(this.judgeType == NOTETYPE_FLICKINKEEP || this.judgeType == NOTETYPE_LONGFLICKEND) {
+    console.log(delta);
     if(delta < -GameSetting.judgeTiming[0]){
       this.state = NOTESTATE_FLICKING;
       if(delta < -GameSetting.judgeTiming[2])this.tempJudge = JUDGE_FAST;
@@ -410,7 +411,7 @@ const Game = {
       let z = (note.time - time) * GameSetting.speed;
       if(z < GameSetting.displayRange[1] && z > GameSetting.displayRange[0]){
         if(note.needFlickIcon()){
-          drawFlick(note.flick, note.width, note.place, z, GameSetting.camera)
+          drawFlick(note.flickDirection, note.width, note.place, z, GameSetting.camera)
         }
       }
     }
@@ -470,16 +471,26 @@ const Game = {
     const dy = y - this.touchHistory[id].y;
     const dt = (ct - this.touchHistory[id].time) / 1000;
     const time = ct - this.start - this.delay;
-    if(Math.sqrt(dx * dx + dy * dy) / dt > 0.75){
+    this.touchHistory[id].x = x;
+    this.touchHistory[id].y = y;
+    this.touchHistory[id].time = ct;
+    if(this.touchHistory[id].bind.length == 0){
+      let idx = this.findNote(time + this.judgeDelta, this.touchHistory[id].x, this.touchHistory[id].y, true);
+      if(idx >= 0)this.onTap(time + this.judgeDelta, id, idx);
+    }
+    for(const bind of this.touchHistory[id].bind){
+      if(this.notes[bind].state == NOTESTATE_DONE)continue;
+      const judge = this.notes[bind].keep(time + this.judgeDelta);
+      this.showJudge(judge);
+    }
+    console.log(time + this.judgeDelta);
+    if(Math.sqrt(dx * dx + dy * dy) / dt > 0.5){
       for(const bind of this.touchHistory[id].bind){
         if(this.notes[bind].state == NOTESTATE_DONE)continue;
         const judge = this.notes[bind].flick(time + this.judgeDelta);
         this.showJudge(judge);
       }
     }
-    this.touchHistory[id].x = x;
-    this.touchHistory[id].y = y;
-    this.touchHistory[id].time = ct;
   },
   onTouchEnd:function(id, x, y){
     for(const bind of this.touchHistory[id].bind){
