@@ -576,8 +576,9 @@ canvas.addEventListener("touchend", onTouchEnd);
 
 function gameStart(){
   gameStarted = true;
-  document.getElementById("main_home").style.display = "none";
-  document.getElementById("main_game").style.display = "block";
+  document.getElementById("main_home").hidden = true;
+  document.getElementById("main_editor").hidden = true;
+  document.getElementById("main_game").hidden = false;
   Game.start = performance.now();
   draw();
 }
