@@ -76,6 +76,8 @@ function Note(time, place, width, type, connectTime = null, connectPlace = null,
   this.time = time;
   this.place = place;
   this.width = width;
+  this.placeModified = place;
+  this.widthModified = width;
   this.type = type;
   this.connectTime = connectTime;
   this.connectPlace = connectPlace;
@@ -319,6 +321,13 @@ const Game = {
   setNotes:function(notes){
     this.notes = notes;
     this.notes.sort((a, b)=>a.time - b.time);
+    for (const note of this.notes) {
+      note.connectTo = -1;
+      note.connectFrom = -1;
+      note.judgeType = 0;
+      note.tempJudge = JUDGE_UNKNOWN;
+      note.state = NOTESTATE_NONE;
+    }
     let nnotes = this.notes.length;
     for(let idx=0;idx<nnotes;idx++){
       const note = this.notes[idx];
@@ -329,6 +338,8 @@ const Game = {
           if(it.time == note.connectTime && it.place == note.connectPlace){
             note.connectTo = idx2;
             it.connectFrom = idx;
+            it.placeModified = Math.min(it.place, note.place);
+            it.widthModified = Math.max(it.place + it.width, note.place + note.width) - it.placeModified;
             if(it.place < note.place && it.place + it.width <= note.place + note.width)it.flickDirection = FLICK_LEFT;
             else if(it.place >= note.place && it.place + it.width > note.place + note.width)it.flickDirection = FLICK_RIGHT;
             else it.flickDirection = FLICK_BOTH;
@@ -355,13 +366,13 @@ const Game = {
       const note = this.notes[idx];
       if(note.state != NOTESTATE_NONE)continue;
       if(Math.abs(time - note.time) < GameSetting.judgeTiming[3]){
-        let xMin = note.place;
-        let xMax = note.place + note.width;
-        if(note.width == 1){
+        let xMin = note.placeModified;
+        let xMax = note.placeModified + note.widthModified;
+        if(note.widthModified == 1){
           xMin-=1;
           xMax+=1;
         }
-        else if(note.width == 2){
+        else if(note.widthModified == 2){
           xMin-=0.5;
           xMax+=0.5;
         }
@@ -402,7 +413,7 @@ const Game = {
     for (const note of this.notes) {
       let z = (note.time - time) * GameSetting.speed;
       if(z < GameSetting.displayRange[1] && z > GameSetting.displayRange[0]){
-        if(note.state != NOTESTATE_DONE) drawNote(note.getSkin(), note.width, note.place, z, GameSetting.camera);
+        if(note.state != NOTESTATE_DONE) drawNote(note.getSkin(), note.widthModified, note.placeModified, z, GameSetting.camera);
       }
     }
     // Draw Flick note
@@ -410,7 +421,7 @@ const Game = {
       let z = (note.time - time) * GameSetting.speed;
       if(z < GameSetting.displayRange[1] && z > GameSetting.displayRange[0]){
         if(note.needFlickIcon()){
-          drawFlick(note.flickDirection, note.width, note.place, z, GameSetting.camera)
+          drawFlick(note.flickDirection, note.widthModified, note.placeModified, z, GameSetting.camera)
         }
       }
     }
@@ -515,8 +526,8 @@ Game.setNotes([
   new Note(1000, 10, 2, NOTETYPE_TAP),
   new Note(2000, 9, 3, NOTETYPE_FLICK, null, null, FLICK_LEFT),
   new Note(3000, 6, 3, NOTETYPE_FLICK, 4000, 6),
-  new Note(4000, 6, 3, NOTETYPE_FLICK, 5000, 6),
-  new Note(5000, 6, 6, NOTETYPE_FLICK),
+  new Note(4000, 6, 3, NOTETYPE_FLICK, 5000, 9),
+  new Note(5000, 9, 3, NOTETYPE_FLICK),
   new Note(3000, 0, 3, NOTETYPE_TAP, 5000, 0),
   new Note(5000, 0, 3, NOTETYPE_TAP),
 ]);
