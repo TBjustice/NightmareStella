@@ -261,7 +261,7 @@ const GameSetting = {
   /** place of judge-line */
   judge:0.6,
   /** place of notes-appear place */
-  appear:0.9,
+  appear:1.0,
   /** note visible time[ms] */
   visibleTime:1,
   /** Camera beta */
