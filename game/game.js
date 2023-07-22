@@ -265,7 +265,7 @@ const GameSetting = {
   /** note visible time[ms] */
   visibleTime:1,
   /** Camera beta */
-  beta:25,
+  beta:28,
   /** judgements */
   judgeTiming:[20, 40, 120, 160],
   // Others
@@ -448,7 +448,9 @@ const Game = {
         this.showJudge(judge);
       }
     }
-    
+
+    if(time + this.judgeDelta - this.notes[this.notes.length - 1].time > 3000)return false;
+    return true;
   },
   initTouchHistory:function(){
     for(let i=0;i<10;i++) this.touchHistory.push({x:0,y:0,time:0,bind:[]});
@@ -511,24 +513,9 @@ const Game = {
 }
 Game.initTouchHistory();
 
-Game.setNotes([
-  new Note(0, 0, 1, NOTETYPE_TAP),
-  new Note(1000, 0, 2, NOTETYPE_TAP),
-  new Note(2000, 0, 3, NOTETYPE_FLICK),
-  new Note(0, 11, 1, NOTETYPE_TAP),
-  new Note(1000, 10, 2, NOTETYPE_TAP),
-  new Note(2000, 9, 3, NOTETYPE_FLICK, null, null, FLICK_LEFT),
-  new Note(3000, 6, 3, NOTETYPE_FLICK, 4000, 6),
-  new Note(4000, 6, 3, NOTETYPE_FLICK, 5000, 9),
-  new Note(5000, 9, 3, NOTETYPE_FLICK),
-  new Note(3000, 0, 3, NOTETYPE_TAP, 5000, 0),
-  new Note(5000, 0, 3, NOTETYPE_TAP),
-]);
-Game.delay = 3000;
-
 function draw() {
-  Game.draw();
-  requestAnimationFrame(draw);
+  if(Game.draw()) requestAnimationFrame(draw);
+  else gameEnd();
 }
 
 function onWindowResized() {
@@ -575,10 +562,29 @@ canvas.addEventListener("touchmove", onTouchMove);
 canvas.addEventListener("touchend", onTouchEnd);
 
 function gameStart(){
-  gameStarted = true;
   document.getElementById("main_home").hidden = true;
   document.getElementById("main_editor").hidden = true;
   document.getElementById("main_game").hidden = false;
+  Game.setNotes([
+    new Note(0, 0, 1, NOTETYPE_TAP),
+    new Note(1000, 0, 2, NOTETYPE_TAP),
+    new Note(2000, 0, 3, NOTETYPE_FLICK),
+    new Note(0, 11, 1, NOTETYPE_TAP),
+    new Note(1000, 10, 2, NOTETYPE_TAP),
+    new Note(2000, 9, 3, NOTETYPE_FLICK, null, null, FLICK_LEFT),
+    new Note(3000, 6, 3, NOTETYPE_FLICK, 4000, 6),
+    new Note(4000, 6, 3, NOTETYPE_FLICK, 5000, 9),
+    new Note(5000, 9, 3, NOTETYPE_FLICK),
+    new Note(3000, 0, 3, NOTETYPE_TAP, 5000, 0),
+    new Note(5000, 0, 3, NOTETYPE_TAP),
+  ]);
+  Game.delay = 3000;
   Game.start = performance.now();
   draw();
+}
+
+function gameEnd(){
+  document.getElementById("main_home").hidden = false;
+  document.getElementById("main_editor").hidden = true;
+  document.getElementById("main_game").hidden = true;
 }
