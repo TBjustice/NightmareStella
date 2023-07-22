@@ -34,3 +34,5 @@ const JUDGE_GOOD_SLOW = 4;
 const JUDGE_PERFECT_FAST = 5;
 const JUDGE_PERFECT_SLOW = 6;
 const JUDGE_SUPER = 7;
+
+const judgeText = ["Miss", "Fast", "Slow", "Good fast", "Good slow", "Perfect", "Perfect", "Super"];

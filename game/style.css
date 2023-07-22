@@ -27,3 +27,12 @@ main{
 #canvas{
   position: absolute;
 }
+
+#judge{
+  position: absolute;
+  top: 75%;
+  width: 100%;
+  transform: translateY(-50%);
+  text-align: center;
+  color: white;
+}

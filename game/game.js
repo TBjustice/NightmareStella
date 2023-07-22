@@ -269,6 +269,9 @@ const Game = {
   judgeDelta:0,
   start:0,
   touchHistory:[],
+  judgeElement:document.getElementById("judge"),
+  judgeOpacity:0,
+  judgeDisplayed:-1,
   setNotes:function(notes){
     this.notes = notes;
     this.notes.sort((a, b)=>a.time - b.time);
@@ -301,8 +304,9 @@ const Game = {
       }
     }
   },
-  findNote:function(time, x, interrupt = false){
+  findNote:function(time, x, y, interrupt = false){
     let nnotes = this.notes.length;
+    let touch = x*12;
     for(let idx=0;idx<nnotes;idx++){
       const note = this.notes[idx];
       if(note.state != NOTESTATE_NONE)continue;
@@ -317,7 +321,7 @@ const Game = {
           xMin-=0.5;
           xMax+=0.5;
         }
-        if(xMin < x && x < xMax && (!interrupt || canInterrupt(note.judgeType))) return idx;
+        if(xMin < touch && touch < xMax && (!interrupt || canInterrupt(note.judgeType))) return idx;
       }
     }
     return -1;
@@ -331,7 +335,7 @@ const Game = {
       this.touchHistory[id].bind.push(idx);
     }
 
-    console.log(judge);
+    this.showJudge(judge);
   },
   draw:function(){
     const time = performance.now() - this.start - this.delay;
@@ -371,19 +375,30 @@ const Game = {
     for(let i=0;i<10;i++) {
       if(this.touchHistory[i].time == 0)continue;
       if(this.touchHistory[i].bind.length == 0){
-        let touch = this.touchHistory[i].x * 12;
-        let idx = this.findNote(time + this.judgeDelta, touch, true);
+        let idx = this.findNote(time + this.judgeDelta, this.touchHistory[i].x, this.touchHistory[i].y, true);
         if(idx >= 0)this.onTap(time + this.judgeDelta, i, idx);
       }
       for(const bind of this.touchHistory[i].bind){
         if(this.notes[bind].state == NOTESTATE_DONE)continue;
         const judge = this.notes[bind].keep(time + this.judgeDelta);
-        console.log(judge);
+        this.showJudge(judge);
       }
+    }
+
+    if(this.judgeDisplayed != JUDGE_UNKNOWN){
+      this.judgeElement.innerText = judgeText[this.judgeDisplayed];
+      this.judgeElement.style.opacity = this.judgeOpacity;
+      if(this.judgeOpacity < 0.1)this.judgeOpacity = 0;
+      else this.judgeOpacity-=0.03;
     }
   },
   initTouchHistory:function(){
     for(let i=0;i<10;i++) this.touchHistory.push({x:0,y:0,time:0,bind:[]});
+  },
+  showJudge:function(judge){
+    if(judge == JUDGE_UNKNOWN)return;
+    this.judgeOpacity = 1;
+    this.judgeDisplayed = judge;
   },
   onTouchStart:function(id, x, y){
     const ct = performance.now();
@@ -392,8 +407,7 @@ const Game = {
     this.touchHistory[id].time = ct;
     
     const time = performance.now() - this.start - this.delay;
-    let touch = x * 12;
-    let idx = this.findNote(time + this.judgeDelta, touch);
+    let idx = this.findNote(time + this.judgeDelta, x, y);
     if(idx >= 0) this.onTap(time + this.judgeDelta, id, idx);
   },
   onTouchMove:function(id, x, y){
@@ -406,7 +420,7 @@ const Game = {
       for(const bind of this.touchHistory[id].bind){
         if(this.notes[bind].state == NOTESTATE_DONE)continue;
         const judge = this.notes[bind].flick(time + this.judgeDelta);
-        console.log(judge);
+        this.showJudge(judge);
       }
     }
     this.touchHistory[id].x = x;
@@ -421,23 +435,6 @@ const Game = {
   }
 }
 Game.initTouchHistory();
-
-/*
-Game.prototype.tap = function(id, x, y){
-  const time = performance.now() - this.start - this.delay;
-  for (const note of this.notes) {
-    let deltaTime = (note.time - time);
-    
-  }
-  console.log("tap", id, x * 8, y);
-}
-Game.prototype.flick = function(id, x, y, speedx, speedy){
-  console.log("flick", id, x * 8, y, speedx, speedy);
-}
-Game.prototype.release = function(id, x, y){
-  console.log("release", id, x * 8, y);
-}
-*/
 
 Game.setNotes([
   new Note(0, 0, 1, NOTETYPE_TAP),
