@@ -70,16 +70,16 @@ Nightmare Stellaのルール
  * @param {Number} type Note's type (NOTETYPE_TAP or NOTETYPE_FLICK)
  * @param {Number} connectTime Note connection in time [ms]
  * @param {Number} connectPlace Note connection in time x-position (from 0 to 12)
- * @param {Number} flick Flick direction. (FLICK_BOTH, FLICK_LEFT, or FLICK_RIGHT)
+ * @param {Number} flickDirection Flick direction. (FLICK_BOTH, FLICK_LEFT, or FLICK_RIGHT)
  */
-function Note(time, place, width, type, connectTime = null, connectPlace = null, flick = FLICK_BOTH){
+function Note(time, place, width, type, connectTime = null, connectPlace = null, flickDirection = FLICK_BOTH){
   this.time = time;
   this.place = place;
   this.width = width;
   this.type = type;
   this.connectTime = connectTime;
   this.connectPlace = connectPlace;
-  this.flick = flick;
+  this.flickDirection = flickDirection;
   /** Connected ID */
   this.connectTo = -1;
   this.connectFrom = -1;
@@ -90,17 +90,129 @@ function Note(time, place, width, type, connectTime = null, connectPlace = null,
 }
 Note.prototype.hasLongnoteFloor = function(){
   return this.connectTo >= 0;
-}
+};
 Note.prototype.getSkin = function(){
   if(this.type == NOTETYPE_FLICK)return NOTESKIN_FLICK;
   if(this.connectTo >= 0 || this.connectFrom >= 0)return NOTESKIN_LONG;
   return NOTESKIN_TAP;
-}
+};
 Note.prototype.needFlickIcon = function(){
   if(this.type == NOTETYPE_TAP)return false;
   if(this.connectFrom >= 0)return true;
   return this.connectTo < 0;
-}
+};
+Note.prototype.tap = function(time){
+  let delta = time - this.time;
+  if(this.judgeType == NOTETYPE_TAP || this.judgeType == NOTETYPE_LONGSTART || this.judgeType == NOTETYPE_LONGFLICKSTART) {
+    this.state = NOTESTATE_DONE;
+    if(delta < -GameSetting.judgeTiming[2])return JUDGE_FAST;
+    if(delta < -GameSetting.judgeTiming[1])return JUDGE_GOOD_FAST;
+    if(delta < -GameSetting.judgeTiming[0])return JUDGE_PERFECT_FAST;
+    if(delta < GameSetting.judgeTiming[0])return JUDGE_SUPER;
+    if(delta < GameSetting.judgeTiming[1])return JUDGE_PERFECT_SLOW;
+    if(delta < GameSetting.judgeTiming[2])return JUDGE_GOOD_SLOW;
+    return JUDGE_SLOW;
+  }
+  else if(this.judgeType == NOTETYPE_TAPINKEEP){
+    if(delta < -GameSetting.judgeTiming[0]){
+      this.state = NOTESTATE_WAIT;
+      // set min judge
+      return JUDGE_UNKNOWN;
+    }
+    else{
+      this.state = NOTESTATE_DONE;
+      if(delta < GameSetting.judgeTiming[0])return JUDGE_SUPER;
+      if(delta < GameSetting.judgeTiming[1])return JUDGE_PERFECT_SLOW;
+      if(delta < GameSetting.judgeTiming[2])return JUDGE_GOOD_SLOW;
+      return JUDGE_SLOW;
+    }
+  }
+  else if(this.judgeType == NOTETYPE_LONGEND) {
+    if(delta < -GameSetting.judgeTiming[0]){
+      this.state = NOTESTATE_WAIT;
+      // set min judge
+      return JUDGE_UNKNOWN;
+    }
+    else{
+      this.state = NOTESTATE_DONE;
+      return JUDGE_SUPER;
+    }
+  }
+  else if(this.judgeType == NOTETYPE_FLICK){
+    this.state = NOTESTATE_WAITFLICK;
+    // set max judge
+    return JUDGE_UNKNOWN;
+  }
+  else if(this.judgeType == NOTETYPE_FLICKINKEEP || this.judgeType == NOTETYPE_LONGFLICKEND) {
+    this.state = NOTESTATE_WAITFLICK;
+    return JUDGE_UNKNOWN;
+  }
+};
+Note.prototype.keep = function(time){
+  let delta = time - this.time;
+  if(Math.abs(delta) > GameSetting.judgeTiming[3])return JUDGE_UNKNOWN;
+  if(this.judgeType == NOTETYPE_TAPINKEEP){
+    if(delta < -GameSetting.judgeTiming[0]){
+      this.state = NOTESTATE_WAIT;
+      // set min judge
+      return JUDGE_UNKNOWN;
+    }
+    else{
+      this.state = NOTESTATE_DONE;
+      if(delta < GameSetting.judgeTiming[0])return JUDGE_SUPER;
+      if(delta < GameSetting.judgeTiming[1])return JUDGE_PERFECT_SLOW;
+      if(delta < GameSetting.judgeTiming[2])return JUDGE_GOOD_SLOW;
+      return JUDGE_SLOW;
+    }
+  }
+  else if(this.judgeType == NOTETYPE_LONGEND) {
+    if(delta < -GameSetting.judgeTiming[0]){
+      this.state = NOTESTATE_WAIT;
+      // set min judge
+      return JUDGE_UNKNOWN;
+    }
+    else{
+      this.state = NOTESTATE_DONE;
+      return JUDGE_SUPER;
+    }
+  }
+  else if(this.judgeType == NOTETYPE_FLICKINKEEP || this.judgeType == NOTETYPE_LONGFLICKEND) {
+    this.state = NOTESTATE_WAITFLICK;
+    return JUDGE_UNKNOWN;
+  }
+  return JUDGE_UNKNOWN;
+};
+Note.prototype.flick = function(time){
+  let delta = time - this.time;
+  if(Math.abs(delta) > GameSetting.judgeTiming[3])return JUDGE_UNKNOWN;
+  if(this.judgeType == NOTETYPE_FLICK) {
+    this.state = NOTESTATE_DONE;
+    let judge = JUDGE_SLOW
+    if(delta < -GameSetting.judgeTiming[2])judge = JUDGE_FAST;
+    else if(delta < -GameSetting.judgeTiming[1])judge = JUDGE_GOOD_FAST;
+    else if(delta < -GameSetting.judgeTiming[0])judge = JUDGE_PERFECT_FAST;
+    else if(delta < GameSetting.judgeTiming[0])judge = JUDGE_SUPER;
+    else if(delta < GameSetting.judgeTiming[1])judge = JUDGE_PERFECT_SLOW;
+    else if(delta < GameSetting.judgeTiming[2])judge = JUDGE_GOOD_SLOW;
+    return judge;
+  }
+  else if(this.judgeType == NOTETYPE_FLICKINKEEP || this.judgeType == NOTETYPE_LONGFLICKEND) {
+    if(delta < -GameSetting.judgeTiming[0]){
+      this.state = NOTESTATE_FLICKING;
+      // set min judge
+      return JUDGE_UNKNOWN;
+    }
+    else{
+      this.state = NOTESTATE_DONE;
+      let judge = JUDGE_SLOW
+      if(delta < GameSetting.judgeTiming[0])judge = JUDGE_SUPER;
+      else if(delta < GameSetting.judgeTiming[1])judge = JUDGE_PERFECT_SLOW;
+      else if(delta < GameSetting.judgeTiming[2])judge = JUDGE_GOOD_SLOW;
+      return judge;
+    }
+  }
+  return JUDGE_UNKNOWN;
+};
 
 const GameSetting = {
   /** place[m] = speed[m/ms] * time[ms] */
@@ -116,7 +228,7 @@ const GameSetting = {
   /** Camera beta */
   beta:25,
   /** judgements */
-  judgeTiming:[40, 80, 160],
+  judgeTiming:[20, 40, 120, 160],
   // Others
   displayRange:[-5, 100],
   camera:Matrix4x4.eye(),
@@ -149,11 +261,12 @@ const GameSetting = {
     ];
     this.displayRange[1] = far;
   }
-}
+};
 
 const Game = {
   notes:[],
   delay:0,
+  judgeDelta:0,
   start:0,
   touchHistory:[],
   setNotes:function(notes){
@@ -169,9 +282,9 @@ const Game = {
           if(it.time == note.connectTime && it.place == note.connectPlace){
             note.connectTo = idx2;
             it.connectFrom = idx;
-            if(it.place < note.place && it.place + it.width <= note.place + note.width)it.flick = FLICK_LEFT;
-            else if(it.place >= note.place && it.place + it.width > note.place + note.width)it.flick = FLICK_RIGHT;
-            else it.flick = FLICK_BOTH;
+            if(it.place < note.place && it.place + it.width <= note.place + note.width)it.flickDirection = FLICK_LEFT;
+            else if(it.place >= note.place && it.place + it.width > note.place + note.width)it.flickDirection = FLICK_RIGHT;
+            else it.flickDirection = FLICK_BOTH;
             break;
           }
         }
@@ -193,7 +306,7 @@ const Game = {
     for(let idx=0;idx<nnotes;idx++){
       const note = this.notes[idx];
       if(note.state != NOTESTATE_NONE)continue;
-      if(Math.abs(time - note.time) < GameSetting.judgeTiming[2]){
+      if(Math.abs(time - note.time) < GameSetting.judgeTiming[3]){
         let xMin = note.place;
         let xMax = note.place + note.width;
         if(note.width == 1){
@@ -209,14 +322,16 @@ const Game = {
     }
     return -1;
   },
-  onTap:function(id, idx){
-    this.notes[idx].state = NOTESTATE_DONE;//To Do
-    console.log("Tap", idx);
+  onTap:function(time, id, idx){
+    const judge = this.notes[idx].tap(time);
+    
     this.touchHistory[id].bind.push(idx);
     while(this.notes[idx].connectTo >= 0){
       idx = this.notes[idx].connectTo;
       this.touchHistory[id].bind.push(idx);
     }
+
+    console.log(judge);
   },
   draw:function(){
     const time = performance.now() - this.start - this.delay;
@@ -257,10 +372,14 @@ const Game = {
       if(this.touchHistory[i].time == 0)continue;
       if(this.touchHistory[i].bind.length == 0){
         let touch = this.touchHistory[i].x * 12;
-        let idx = this.findNote(time, touch, true);
-        if(idx >= 0)this.onTap(i, idx);
+        let idx = this.findNote(time + this.judgeDelta, touch, true);
+        if(idx >= 0)this.onTap(time + this.judgeDelta, i, idx);
       }
-      
+      for(const bind of this.touchHistory[i].bind){
+        if(this.notes[bind].state == NOTESTATE_DONE)continue;
+        const judge = this.notes[bind].keep(time + this.judgeDelta);
+        console.log(judge);
+      }
     }
   },
   initTouchHistory:function(){
@@ -274,26 +393,27 @@ const Game = {
     
     const time = performance.now() - this.start - this.delay;
     let touch = x * 12;
-    let idx = this.findNote(time, touch);
-    if(idx >= 0){
-      this.onTap(id, idx);
-    }
+    let idx = this.findNote(time + this.judgeDelta, touch);
+    if(idx >= 0) this.onTap(time + this.judgeDelta, id, idx);
   },
   onTouchMove:function(id, x, y){
     const ct = performance.now();
     const dx = x - this.touchHistory[id].x;
     const dy = y - this.touchHistory[id].y;
     const dt = (ct - this.touchHistory[id].time) / 1000;
+    const time = ct - this.start - this.delay;
     if(Math.sqrt(dx * dx + dy * dy) / dt > 1){
-      console.log("flick", id, x, y, dx / dt, dy / dt);
-      //game.flick(id, cx, cy, dx / dt, dy/dt);
+      for(const bind of this.touchHistory[id].bind){
+        if(this.notes[bind].state == NOTESTATE_DONE)continue;
+        const judge = this.notes[bind].flick(time + this.judgeDelta);
+        console.log(judge);
+      }
     }
     this.touchHistory[id].x = x;
     this.touchHistory[id].y = y;
     this.touchHistory[id].time = ct;
   },
   onTouchEnd:function(id, x, y){
-    console.log("release", id, x, y);
     this.touchHistory[id].x = 0;
     this.touchHistory[id].y = 0;
     this.touchHistory[id].time = 0;
