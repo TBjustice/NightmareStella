@@ -32,25 +32,18 @@ Nightmare Stellaのルール
 2 ノーツの判定に関する詳細
   2.1 Tap
     Game.prototype.tapが呼ばれた瞬間に判定を行います。
-    -inf|Miss|-160|Fast|-80ms|Good|-40ms|Perfect|+40ms|Good|+80ms|Slow|+160ms|Miss|+inf
   2.2 LongStart
     Game.prototype.tapが呼ばれた瞬間に判定を行います。
-    -inf|Miss|-160|Fast|-80ms|Good|-40ms|Perfect|+40ms|Good|+80ms|Slow|+160ms|Miss|+inf
   2.3 LongEnd
     Game.prototype.releaseが呼ばれた瞬間に判定を行います。離さなくても問題ないです。
-    -inf|Miss|-160|Fast|-80ms|Good|-40ms|Perfect|+inf
   2.4 Flick
     Game.prototype.tapが呼ばれた時に判定フラグを立て、その後にGame.prototype.flickが呼ばれた時点で判定を行います。
-    -inf|Miss|-160|Fast|-80ms|Good|-40ms|Perfect|+40ms|Good|+80ms|Slow|+160ms|Miss|+inf
   2.5 FlickInKeep
   　Game.prototype.flickが呼ばれた時点で判定を行います。ただし、上書きが可能で、Perfectになるまでは判定が生きています。
-    -inf|Miss|-160|Fast|-80ms|Good|-40ms|Perfect|+40ms|Good|+80ms|Slow|+160ms|Miss|+inf
   2.6 LongFlickStart
     Game.prototype.tapが呼ばれた瞬間に判定を行います。
-    -inf|Miss|-160|Fast|-80ms|Good|-40ms|Perfect|+40ms|Good|+80ms|Slow|+160ms|Miss|+inf
   2.7 LongFlickEnd
   　Game.prototype.flickが呼ばれた時点で判定を行います。ただし、上書きが可能で、Perfectになるまでは判定が生きています。
-    -inf|Miss|-160|Fast|-80ms|Good|-40ms|Perfect|+40ms|Good|+80ms|Slow|+160ms|Miss|+inf
 
 3 ノーツの横の判定
   3.1 幅1のノーツ
@@ -532,7 +525,6 @@ Game.setNotes([
   new Note(5000, 0, 3, NOTETYPE_TAP),
 ]);
 Game.delay = 3000;
-Game.start = performance.now();
 
 function draw() {
   Game.draw();
@@ -582,4 +574,10 @@ canvas.addEventListener("touchstart", onTouchStart);
 canvas.addEventListener("touchmove", onTouchMove);
 canvas.addEventListener("touchend", onTouchEnd);
 
-draw();
+function gameStart(){
+  gameStarted = true;
+  document.getElementById("main_home").style.display = "none";
+  document.getElementById("main_game").style.display = "block";
+  Game.start = performance.now();
+  draw();
+}

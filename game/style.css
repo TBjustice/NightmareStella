@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body{
   margin: 0;
   padding: 0;
@@ -10,18 +14,62 @@ main{
   right: 0;
   bottom: 0;
   overflow: hidden;
-  background: rgb(18,0,32);
 }
 
-#gamelist{
+/* Home */
+
+#main_home{
+  background: #dddddd;
+}
+
+#main_home h1{
+  margin: 0;
+  height: 4rem;
+  font-size: 2rem;
+  padding: 0.5rem 1rem;
+  background: rgb(18,0,32);
+  color: white;
+}
+
+#chart_list{
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 30%;
+  top: 4rem;
   bottom: 0;
-  overflow-x:hidden;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding: 1rem;
   overflow-y: auto;
-  background:rgb(36, 0, 64);
+}
+@media (min-width: 800px) {
+  #chart_list {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+#chart_list > .card{
+  background: white;
+  box-shadow: 1px 1px 4px 0px rgba(0,0,0,0.5);
+  aspect-ratio: 16 / 9;
+  grid-column: span 2;
+}
+@media (min-width: 800px) {
+  #chart_list > .card {
+    grid-column: span 4;
+  }
+}
+@media (min-width: 1200px) {
+  #chart_list > .card {
+    grid-column: span 3;
+  }
+}
+
+/* Game */
+
+#main_game{
+  background: rgb(18,0,32);
 }
 
 #canvas{
@@ -35,4 +83,5 @@ main{
   transform: translateY(-50%);
   text-align: center;
   color: white;
+  font-size: 1.5rem;
 }
