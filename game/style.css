@@ -30,7 +30,7 @@ main{
 
 #judge{
   position: absolute;
-  top: 75%;
+  top: 50%;
   width: 100%;
   transform: translateY(-50%);
   text-align: center;
