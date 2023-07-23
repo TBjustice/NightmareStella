@@ -552,27 +552,22 @@ gametouch_dummyelement.addEventListener("touchstart", onTouchStart);
 gametouch_dummyelement.addEventListener("touchmove", onTouchMove);
 gametouch_dummyelement.addEventListener("touchend", onTouchEnd);
 
+function setGameCanvasSize() {
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  gametouch_dummyelement.style.width = width + "px";
+  gametouch_dummyelement.style.height = height + "px";
+  painter.resizeCanvas(width, height);
+  GameSetting.update(1);
+}
+window.addEventListener("resize", setGameCanvasSize);
+setGameCanvasSize();
+
 function gameStart(){
   main_home.hidden = true;
   main_editor.hidden = true;
   main_game.hidden = false;
-  Game.setNotes([
-    new Note(0, 0, 1, NOTETYPE_TAP),
-    new Note(500, 2, 2, NOTETYPE_TAP),
-    new Note(1000, 3, 3, NOTETYPE_FLICK),
-    new Note(1000, 9, 3, NOTETYPE_TAP),
-    new Note(1500, 6, 3, NOTETYPE_TAP),
-    new Note(2000, 6, 6, NOTETYPE_FLICK),
-    new Note(3000, 6, 3, NOTETYPE_FLICK, 4000, 6),
-    new Note(4000, 6, 3, NOTETYPE_FLICK, 5000, 9),
-    new Note(5000, 9, 3, NOTETYPE_FLICK, 5500, 6),
-    new Note(5500, 6, 3, NOTETYPE_FLICK, 6000, 6),
-    new Note(6000, 6, 3, NOTETYPE_FLICK),
-    new Note(3000, 0, 3, NOTETYPE_TAP, 5000, 0),
-    new Note(5000, 0, 3, NOTETYPE_TAP),
-    new Note(5500, 0, 6, NOTETYPE_TAP),
-    new Note(6000, 0, 6, NOTETYPE_TAP)
-  ]);
+  Game.setNotes(Editor.toNotes());
   Game.delay = 3000;
   Game.start = performance.now();
   draw();
