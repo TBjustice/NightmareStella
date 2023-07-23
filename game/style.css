@@ -16,6 +16,20 @@ main{
   overflow: hidden;
 }
 
+button{
+  appearance: none;
+  border: 0;
+  border-radius: 5px;
+  background: #3270ed;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+button:hover{
+  background: #6798fa;
+  cursor: pointer;
+}
+
 /* Home */
 
 #main_home{
@@ -31,7 +45,7 @@ main{
   color: white;
 }
 
-#chart_list{
+#game_list{
   position: absolute;
   top: 4rem;
   bottom: 0;
@@ -44,55 +58,73 @@ main{
   overflow-y: auto;
 }
 @media (min-width: 800px) {
-  #chart_list {
+  #game_list {
     grid-template-columns: repeat(12, 1fr);
   }
 }
 
-#chart_list > div{
+#game_list > div{
   background: white;
   box-shadow: 1px 1px 4px 0px rgba(0,0,0,0.5);
   height: fit-content;
   grid-column: span 2;
 }
 @media (min-width: 800px) {
-  #chart_list > div {
+  #game_list > div {
     grid-column: span 4;
   }
 }
 @media (min-width: 1200px) {
-  #chart_list > div {
+  #game_list > div {
     grid-column: span 3;
   }
 }
 
-#chart_list > div > header{
+#game_list > div > header{
   background: #0ff;
   text-align: center;
   font-size: 1.5rem;
 }
-#chart_list > div > p{
+#game_list > div > p{
   margin: 0.5rem;
 }
-#chart_list > div > div{
+#game_list > div > div{
   display: flex;
   justify-content: space-around;
   margin-bottom: 0.5rem;
 }
-#chart_list > div > div > button{
-  appearance: none;
-  border: 0;
-  border-radius: 5px;
-  background: #3270ed;
-  color: #fff;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
+
+#add_new_game{
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 100%;
+  font-size: 2rem;
+  line-height: 3rem;
+  text-align: center;
+  background: purple;
+  color: white;
+  user-select: none;
 }
 
 /* Editor */
 
+#editor_menu{
+  position: absolute;
+  width:80px;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  gap: 0.5rem;
+}
+#editor_menu button{
+  padding: 0.5rem 0;
+}
 #editor_canvas{
   position: absolute;
+  left: 80px;
 }
 
 /* Game */

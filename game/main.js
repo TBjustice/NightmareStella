@@ -55,6 +55,30 @@ Nightmare Stellaのルール
 
 */
 
+let storage = localStorage.getItem("NightmareStella");
+if(storage !== null)storage = JSON.parse(storage);
+else storage={games:[], settings:{}};
+addEventListener("beforeunload", (event) => {
+  localStorage.setItem("NightmareStella", JSON.stringify(storage));
+});
+
+function updateGameList(){
+  let text = "";
+  for(let i=0;i<storage.games.length;i++){
+    let game = storage.games[i]
+    text += "<div>";
+    text+="<header>" + game.title + "</header>";
+    text+="<p>"+game.description+"</p>";
+    text+="<div>";
+    text+="<button onclick=\"editStart(" + i + ")\">Edit</button>";
+    text+="<button onclick=\"gameStart(" + i + ")\">Play</button>";
+    text+="</div>";
+    text+="</div>";
+  }
+  game_list.innerHTML = text;
+}
+updateGameList();
+
 /**
  * 
  * @param {Number} time time in ms
@@ -564,10 +588,15 @@ window.addEventListener("resize", setGameCanvasSize);
 setGameCanvasSize();
 
 function gameStart(){
+  let notes = Editor.toNotes();
+  if(notes.length == 0){
+    alert("There are no notes in this game.");
+    return;
+  }
   main_home.hidden = true;
   main_editor.hidden = true;
   main_game.hidden = false;
-  Game.setNotes(Editor.toNotes());
+  Game.setNotes(notes);
   Game.delay = 3000;
   Game.start = performance.now();
   draw();

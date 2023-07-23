@@ -16,14 +16,14 @@ const Editor = {
     if (lines.length < 3) return;
     let notedata = lines[0].split(",");
     for (let notedatam of notedata) {
-      let buf = [];
+      let buf = [0,0,0,0,0,0,0,0,0,0,0,0];
       for (let i = 0; i < notedatam.length; i++) {
         if (i == 12) break;
-        if (notedatam[i] == "T") buf.push(1);
-        else if (notedatam[i] == "t") buf.push(2);
-        else if (notedatam[i] == "F") buf.push(3);
-        else if (notedatam[i] == "f") buf.push(4);
-        else buf.push(0);
+        if (notedatam[i] == "T") buf[i] = 1;
+        else if (notedatam[i] == "F") buf[i] = 2;
+        else if (notedatam[i] == "t") buf[i] = 3;
+        else if (notedatam[i] == "f") buf[i] = 4;
+        else buf[i] = 0;
       }
       this.notes.push(buf);
     }
@@ -48,8 +48,8 @@ const Editor = {
         for (let i = 0; i < 12; i++) {
           if (note[i] == 0) text += "-";
           else if (note[i] == 1) text += "T";
-          else if (note[i] == 2) text += "t";
-          else if (note[i] == 3) text += "F";
+          else if (note[i] == 2) text += "F";
+          else if (note[i] == 3) text += "t";
           else if (note[i] == 4) text += "f";
         }
         text += ","
@@ -132,8 +132,8 @@ const Editor = {
       ctx.strokeStyle = "#000000";
       for (let i = 0; i < 12; i++) {
         if (data[i] == 1) ctx.fillStyle = "#ff0000";
-        else if (data[i] == 2) ctx.fillStyle = "#ff8888";
-        else if (data[i] == 3) ctx.fillStyle = "#0000ff";
+        else if (data[i] == 2) ctx.fillStyle = "#0000ff";
+        else if (data[i] == 3) ctx.fillStyle = "#ff8888";
         else if (data[i] == 4) ctx.fillStyle = "#8888ff";
         else ctx.fillStyle = "#ffffff";
         ctx.fillRect(cellsize * i, y, cellsize, cellsize);
@@ -180,6 +180,7 @@ const Editor = {
         if (x1 == x2) {
           this.notes[y1][x1]++;
           this.notes[y1][x1] %= 5;
+      console.log(x1,x2,y1,y2,this.notes[y1][x1]);
         }
         else {
           for (let i = Math.min(x1, x2); i <= Math.max(x1, x2); i++) {
@@ -198,23 +199,29 @@ Editor.context = editor_canvas.getContext("2d");
 Editor.offset = 0;
 
 function onEditorTouchStart(event) {
-  Editor.touchStart(event.changedTouches[0].pageX, event.changedTouches[0].pageY);
+  event.preventDefault();
+  Editor.touchStart(event.changedTouches[0].pageX - 80, event.changedTouches[0].pageY);
 }
 function onEditorTouchEnd(event) {
-  Editor.touchEnd(event.changedTouches[0].pageX, event.changedTouches[0].pageY);
+  event.preventDefault();
+  Editor.touchEnd(event.changedTouches[0].pageX - 80, event.changedTouches[0].pageY);
 }
 editor_canvas.addEventListener("touchstart", onEditorTouchStart);
 editor_canvas.addEventListener("touchend", onEditorTouchEnd);
 function onEditorMouseDown(event) {
-  Editor.touchStart(event.pageX, event.pageY);
+  event.preventDefault();
+  Editor.touchStart(event.pageX - 80, event.pageY);
 }
 function onEditorMouseUp(event) {
-  Editor.touchEnd(event.pageX, event.pageY);
+  event.preventDefault();
+  Editor.touchEnd(event.pageX - 80, event.pageY);
 }
 editor_canvas.addEventListener("mousedown", onEditorMouseDown);
 editor_canvas.addEventListener("mouseup", onEditorMouseUp);
 
-function editStart() {
+function editStart(id) {
+  if(id >= storage.games.length)return;
+  Editor.decode(storage.games[id].notescript);
   main_home.hidden = true;
   main_editor.hidden = false;
   main_game.hidden = true;
@@ -224,13 +231,22 @@ function editStart() {
 function setEditorCanvasSize(event) {
   let width = window.innerWidth;
   let height = window.innerHeight;
-  editor_canvas.style.width = width + "px";
+  editor_canvas.style.width = (width - 80) + "px";
   editor_canvas.style.height = height + "px";
-  editor_canvas.setAttribute("width", width + "px");
+  editor_canvas.setAttribute("width", (width-80)  + "px");
   editor_canvas.setAttribute("height", height + "px");
   Editor.draw();
 }
 window.addEventListener("resize", setEditorCanvasSize)
 setEditorCanvasSize();
 
-Editor.decode("---FFFfff---,------------,ttt------ttt,ttt---------,ttt------ttt\n\n120:0");
+function addNewGame(){
+  let name = prompt("Enter the title of new game");
+  if(name === null || name.length == 0)return;
+  storage.games.push({
+    "name":name,
+    "description":name,
+    "notescript":"\n\n120:0"
+  });
+  editStart(storage.games.length - 1);
+}

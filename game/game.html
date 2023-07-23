@@ -9,16 +9,25 @@
 <body>
   <main id="main_home">
     <h1>Nightmare Stella</h1>
-    <div id="chart_list">
+    <div id="game_list">
       <div>
         <header>デバッグ用譜面</header>
         <p>デバッグ用の譜面です。</p>
-        <div><button onclick="editStart(0)">Edit</button><button onclick="gameStart(0)">Play</button></div>
+        <div>
+          <button onclick="editStart(0)">Edit</button>
+          <button onclick="gameStart(0)">Play</button>
+        </div>
       </div>
     </div>
+    <div id="add_new_game" onclick="addNewGame()">+</div>
   </main>
 
   <main id="main_editor" hidden>
+    <div id="editor_menu">
+      <button>Save</button>
+      <button>Save As</button>
+      <input type="number" name="BPM_input" id="BPM_input" value="120">
+    </div>
     <canvas id="editor_canvas"></canvas>
   </main>
 
