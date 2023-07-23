@@ -80,11 +80,29 @@ const Editor = {
         if (note[i] != 0) {
           let j = i;
           while (i + 1 < 12 && note[j] == note[i + 1]) i++;
+          let connect=null;
+          let connectPlace=null;
+          for (const connection of this.connections) {
+            let fromTime=Math.min(connection.fromTime,connection.toTime);
+            let toTime=Math.max(connection.fromTime,connection.toTime);
+            let fromPlace=connection.fromPlace;
+            let toPlace=connection.toPlace;
+            if(connection.fromTime>connection.toTime) {
+              fromPlace=connection.toPlace;
+              toPlace=connection.fromPlace;
+            }
+            if(fromTime==t && fromPlace==j){
+              connect=Math.floor(toTime * (60 / this.BPM[0].BPM) * 0.5 * 1000);
+              connectPlace=toPlace;
+              console.log(t, Math.floor(t * (60 / this.BPM[0].BPM) * 0.5 * 1000),connect, toTime, connectPlace);
+              break;
+            }
+          }
           if(note[j] == 1 || note[j] == 2){
-            data.push(new Note(Math.floor(t * (60 / this.BPM[0].BPM) * 0.5 * 1000), j, i-j+1,NOTETYPE_TAP));
+            data.push(new Note(Math.floor(t * (60 / this.BPM[0].BPM) * 0.5 * 1000), j, i-j+1,NOTETYPE_TAP, connect, connectPlace));
           }
           else{
-            data.push(new Note(Math.floor(t * (60 / this.BPM[0].BPM) * 0.5 * 1000), j, i-j+1,NOTETYPE_FLICK));
+            data.push(new Note(Math.floor(t * (60 / this.BPM[0].BPM) * 0.5 * 1000), j, i-j+1,NOTETYPE_FLICK, connect, connectPlace));
           }
         }
       }
@@ -214,4 +232,3 @@ function setEditorCanvasSize(event) {
 }
 window.addEventListener("resize", setEditorCanvasSize)
 setEditorCanvasSize();
-

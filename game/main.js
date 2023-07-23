@@ -339,7 +339,7 @@ const Game = {
             break;
           }
         }
-        if(note.connectTo < 0)console.error("Connection not found!");
+        if(note.connectTo < 0)console.error("Connection not found!", note.connectTime, note.connectPlace);
       }
       
       if(note.connectTo >= 0){
