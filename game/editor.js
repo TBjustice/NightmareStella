@@ -232,3 +232,5 @@ function setEditorCanvasSize(event) {
 }
 window.addEventListener("resize", setEditorCanvasSize)
 setEditorCanvasSize();
+
+Editor.decode("---FFFfff---,------------,ttt------ttt,ttt---------,ttt------ttt\n\n120:0");
