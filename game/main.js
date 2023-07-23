@@ -1,3 +1,5 @@
+// FIXME Game and notes should be included ion other file
+
 /*
 Nightmare Stellaのルール
 
@@ -55,17 +57,10 @@ Nightmare Stellaのルール
 
 */
 
-let storage = localStorage.getItem("NightmareStella");
-if(storage !== null)storage = JSON.parse(storage);
-else storage={games:[], settings:{}};
-addEventListener("beforeunload", (event) => {
-  localStorage.setItem("NightmareStella", JSON.stringify(storage));
-});
-
 function updateGameList(){
   let text = "";
-  for(let i=0;i<storage.games.length;i++){
-    let game = storage.games[i]
+  for(let i=0;i<savedData.games.length;i++){
+    let game = savedData.games[i]
     text += "<div>";
     text+="<header>" + game.title + "</header>";
     text+="<p>"+game.description+"</p>";
@@ -277,6 +272,7 @@ Note.prototype.release = function(){
   }
 }
 
+// FIXME This should be included in savedData
 const GameSetting = {
   /** place[m] = speed[m/ms] * time[ms] */
   speed:0.050,

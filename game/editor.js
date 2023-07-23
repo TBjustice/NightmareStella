@@ -1,8 +1,11 @@
 /*
-FFFfffTTT---,FFFfff---TTT,FFFfff---TTTFFF---fffTTT,
-0:0:4:0,6:0:4:6
-120:0,160:100
+This file includes Notes-Editor object.
+It must be independent from other programs (except libraries and initials.js)
 */
+
+// FIXME Make Editor independent from Notes function.
+// TODO Data should include delay-time
+// TODO Make drag to scroll
 
 const Editor = {
   notes: [],
@@ -167,7 +170,7 @@ const Editor = {
       else this.offset = this.offset != 0 ? this.offset - 1 : 0;
     }
     else if (this.touchHistory.x > width - 120) {
-      //To Do
+      // TODO Add BPM controls
     }
     else {
       let x1 = Math.floor(this.touchHistory.x / cellsize);
@@ -219,9 +222,10 @@ function onEditorMouseUp(event) {
 editor_canvas.addEventListener("mousedown", onEditorMouseDown);
 editor_canvas.addEventListener("mouseup", onEditorMouseUp);
 
+// FIXME This should be included in other file
 function editStart(id) {
-  if(id >= storage.games.length)return;
-  Editor.decode(storage.games[id].notescript);
+  if(id >= savedData.games.length)return;
+  Editor.decode(savedData.games[id].notescript);
   main_home.hidden = true;
   main_editor.hidden = false;
   main_game.hidden = true;
@@ -240,13 +244,14 @@ function setEditorCanvasSize(event) {
 window.addEventListener("resize", setEditorCanvasSize)
 setEditorCanvasSize();
 
+// FIXME This should be included in other file
 function addNewGame(){
   let name = prompt("Enter the title of new game");
   if(name === null || name.length == 0)return;
-  storage.games.push({
+  savedData.games.push({
     "name":name,
     "description":name,
     "notescript":"\n\n120:0"
   });
-  editStart(storage.games.length - 1);
+  editStart(savedData.games.length - 1);
 }

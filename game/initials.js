@@ -1,3 +1,12 @@
+/*
+This file includes
+1. Constant variables, which is used to write easy-to-understand code.
+2. Functions that is closely related to constant variables.
+3. LUTs(Look up tables).
+4. HTML elements.
+5. Variable contains saved-data, which is loaded from localStorage at first, and saved before unload page.
+*/
+
 const NOTESKIN_TAP = 0;
 const NOTESKIN_LONG = 1;
 const NOTESKIN_FLICK = 2;
@@ -11,6 +20,11 @@ const NOTETYPE_LONGEND = 5;
 const NOTETYPE_FLICKINKEEP = 6;
 const NOTETYPE_LONGFLICKEND = 7;
 
+/**
+ * 
+ * @param {Number} notetype 
+ * @returns Whether a note-type can be bound with touch-event which is fired sometime before.
+ */
 function canInterrupt(notetype){
   return notetype >= NOTETYPE_TAPINKEEP;
 }
@@ -35,6 +49,7 @@ const JUDGE_GOOD_SLOW = 5;
 const JUDGE_SLOW = 6;
 const JUDGE_MISS = 7;
 
+/** LUT of name of judgements. */
 const judgeText = ["Fast", "Good fast", "Perfect", "Super", "Perfect", "Good slow", "Slow", "Miss"];
 
 const main_home = document.getElementById("main_home");
@@ -47,5 +62,15 @@ const main_game = document.getElementById("main_game");
 const canvas = document.getElementById("canvas");
 const gametouch_dummyelement = document.getElementById("gametouch_dummyelement");
 
+/** Contains all saved-data, include games and game-settings */
+let savedData = localStorage.getItem("NightmareStella");
+if(savedData !== null)savedData = JSON.parse(savedData);
+else savedData={
+  games:[],
+  settings:{}
+};
 
+addEventListener("beforeunload", (event) => {
+  localStorage.setItem("NightmareStella", JSON.stringify(savedData));
+});
 
