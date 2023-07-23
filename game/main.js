@@ -491,7 +491,7 @@ const Game = {
       this.showJudge(judge);
     }
 
-    if(Math.sqrt(dx * dx + dy * dy) / dt > 0.05){
+    if(Math.sqrt(dx * dx + dy * dy) / dt > 0.5){
       for(const bind of this.touchHistory[id].bind){
         if(this.notes[bind].state == NOTESTATE_DONE)continue;
         const judge = this.notes[bind].flick(time + this.judgeDelta);
