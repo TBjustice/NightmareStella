@@ -170,6 +170,7 @@ function addNewGame(){
 
 function saveGame(){
   Editor.save();
+  localStorage.setItem("NightmareStella", JSON.stringify(savedData));
   updateGameList();
   main_home.hidden = false;
   main_editor.hidden = true;
@@ -185,6 +186,7 @@ function saveGameAs(){
   let description = prompt("Enter the title of new game");
   if(description === null)description = name;
   Editor.saveAs(name, description);
+  localStorage.setItem("NightmareStella", JSON.stringify(savedData));
   updateGameList();
   main_home.hidden = false;
   main_editor.hidden = true;
