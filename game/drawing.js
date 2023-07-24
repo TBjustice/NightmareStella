@@ -106,14 +106,14 @@ function drawFlick(type, size, place, z, camera) {
   painter.setUniform("cameraMatrix", camera);
   painter.setTexture2D("image", flickarrow.texture);
   for (let i = 0; i < size; i++) {
-    painter.setUniform("global_alpha", 0.8);
+    painter.setUniform("global_alpha", 0.5);
     let model = Matrix4x4.translation(place + i * 0.5 + 0.25, 0.60, -z);
     if(type != FLICK_RIGHT)Matrix4x4.mul(model, Matrix4x4.rotationY(180));
     painter.setUniform("modelMatrix", model);
     painter.drawElements(6);
   }
   for (let i = size; i < 2 * size; i++) {
-    painter.setUniform("global_alpha", 0.8);
+    painter.setUniform("global_alpha", 0.5);
     let model = Matrix4x4.translation(place + i * 0.5 + 0.25, 0.60, -z);
     if(type == FLICK_LEFT) Matrix4x4.mul(model, Matrix4x4.rotationY(180));
     painter.setUniform("modelMatrix", model);
