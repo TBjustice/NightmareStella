@@ -9,29 +9,40 @@
 <body>
   <main id="main_home">
     <h1>Nightmare Stella</h1>
-    <div id="chart_list">
+    <div id="game_list">
       <div>
         <header>デバッグ用譜面</header>
         <p>デバッグ用の譜面です。</p>
-        <div><button onclick="editStart(0)">Edit</button><button onclick="gameStart(0)">Play</button></div>
+        <div>
+          <button onclick="editStart(0)">Edit</button>
+          <button onclick="gameStart(0)">Play</button>
+        </div>
       </div>
     </div>
+    <div id="add_new_game" onclick="addNewGame()">+</div>
   </main>
 
   <main id="main_editor" hidden>
+    <div id="editor_menu">
+      <button onclick="saveGame()">Save</button>
+      <button onclick="saveGameAs()">Save As</button>
+    </div>
     <canvas id="editor_canvas"></canvas>
   </main>
 
   <main id="main_game" hidden>
     <canvas id="canvas"></canvas>
-    <div id="judge"></div>
+    <div id="judge_display"></div>
     <div id="gametouch_dummyelement"></div>
   </main>
 
-  <script src="Matrix.js"></script>
-  <script src="Painter.js"></script>
-  <script src="constants.js"></script>
+  <script src="lib/Matrix.js"></script>
+  <script src="lib/Painter.js"></script>
+  <script src="initials.js"></script>
   <script src="drawing.js"></script>
+  <script src="note.js"></script>
+  <script src="game.js"></script>
+  <script src="gamechart.js"></script>
   <script src="main.js"></script>
   <script src="editor.js"></script>
 </body>
