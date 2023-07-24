@@ -32,7 +32,12 @@ const GameChart = {
       for (const connectiondatam of connectiondata) {
         let buf = connectiondatam.split(":");
         if (buf.length < 4) continue;
-        this.connections.push({ fromTick: parseInt(buf[0]), fromPlace: parseInt(buf[1]), toTick: parseInt(buf[2]), toPlace: parseInt(buf[3]) });
+        const tick1 = parseInt(buf[0]);
+        const place1=parseInt(buf[1]);
+        const tick2 = parseInt(buf[2]);
+        const place2=parseInt(buf[3]);
+        if(tick1 < tick2) this.connections.push({ fromTick: tick1, fromPlace: place1, toTick: tick2, toPlace: place2 });
+        else this.connections.push({ fromTick: tick2, fromPlace: place2, toTick: tick1, toPlace: place1 });
       }
     }
     if(lines.length >= 3 && lines[2].length > 0){
@@ -106,18 +111,11 @@ const GameChart = {
           let connectTime=null;
           let connectPlace=null;
           for (const connection of this.connections) {
-            const fromTick=Math.min(connection.fromTick,connection.toTick);
-            const toTick=Math.max(connection.fromTick,connection.toTick);
-            let fromPlace=connection.fromPlace;
             let toPlace=connection.toPlace;
-            if(connection.fromTime>connection.toTime) {
-              fromPlace=connection.toPlace;
-              toPlace=connection.fromPlace;
-            }
-            if(fromTick==t && place <= fromPlace && fromPlace < i){
-              if(toTick >= this.notes.length || this.notes[toTick][toPlace] == 0) break; //Error!
-              while(toPlace != 0 && this.notes[toTick][toPlace - 1] == this.notes[toTick][toPlace])toPlace--;
-              connectTime=timelut[toTick];
+            if(connection.fromTick==t && place <= connection.fromPlace && connection.fromPlace < i){
+              if(connection.toTick >= this.notes.length || this.notes[connection.toTick][toPlace] == 0) break; //Error!
+              while(toPlace != 0 && this.notes[connection.toTick][toPlace - 1] == this.notes[connection.toTick][toPlace])toPlace--;
+              connectTime=timelut[connection.toTick];
               connectPlace=toPlace;
               break;
             }
@@ -127,5 +125,46 @@ const GameChart = {
       }
     }
     return data;
+  },
+  changeBPM:function(tick, value){
+    for (let i = 0; i< this.BPM.length; i++) {
+      if(this.BPM[i].fromTick == tick){
+        if(value <= 0) {
+          if(tick != 0)this.connections.splice(i, 1);
+        }
+        else this.BPM[i].BPM = value;
+        return;
+      }
+    }
+    this.BPM.push({ "BPM":value, "fromTick":tick });
+  },
+  getBPMSetting:function(tick){
+    for (const bpm of this.BPM) {
+      if(bpm.fromTick == tick)return bpm.BPM;
+    }
+    return 0;
+  },
+  addConnection:function(tick1, place1, tick2, place2){
+    let fromTick = Math.min(tick1,tick2);
+    let toTick = Math.max(tick1,tick2);
+    let fromPlace = tick1 < tick2 ? place1 : place2;
+    let toPlace = tick1 < tick2 ? place2 : place1;
+    for (const connection of this.connections) {
+      if(connection.fromTick == fromTick && connection.fromPlace == fromPlace){
+        connection.fromPlace = fromPlace;
+        connection.toTick = toTick;
+        connection.toPlace = toPlace;
+        return;
+      }
+    }
+    this.connections.push({ "fromTick": fromTick, "fromPlace": fromPlace, "toTick": toTick, "toPlace": toPlace });
+  },
+  removeConnection:function(tick, place){
+    for (let i = 0; i< this.connections.length; i++) {
+      if(this.connections[i].fromTick == tick && this.connections[i].fromPlace == place){
+        this.connections.splice(i, 1);
+        return;
+      }
+    }
   }
 };

@@ -1,9 +1,8 @@
 /*
 This file includes Notes-Editor object.
-It must be independent from other programs (except libraries and initials.js)
+It must be independent from other programs (except gamechart.js and initials.js)
 */
 
-// FIXME Make Editor independent from Notes function.
 // TODO Data should include delay-time
 // TODO Make drag to scroll
 
@@ -36,11 +35,13 @@ const Editor = {
     ctx.fillRect(width - 60, 0, 60, height / 2);
     ctx.fillStyle = "#aaaaff";
     ctx.fillRect(width - 60, height / 2, 60, height / 2);
-    ctx.font = "16px serif";
+    ctx.font = "12px serif";
     for (let t = 0; t < height / cellsize; t++) {
       let y = height - cellsize * (t + 1);
       ctx.fillStyle = "#000000";
-      ctx.fillText("" + ((t + this.offset) / 2), width - 110, y + cellsize / 2);
+      let bpm = GameChart.getBPMSetting(t + this.offset);
+      if(bpm == 0)ctx.fillText("" + ((t + this.offset) / 2), width - 115, y + cellsize / 2);
+      else ctx.fillText("BPM:" + bpm, width - 115, y + cellsize / 2);
       let data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
       if (t + this.offset < GameChart.notes.length) {
         data = GameChart.notes[t + this.offset];
@@ -83,15 +84,20 @@ const Editor = {
       else this.offset = this.offset != 0 ? this.offset - 1 : 0;
     }
     else if (this.touchHistory.x > width - 120) {
-      // TODO Add BPM controls
+      if(x < width - 120) return;
+      let text = prompt("Enter new bpm. Enter 0 to erase bpm setting.");
+      if(text === null)return;
+      let tick = this.offset + Math.floor((height - y) / cellsize);
+      GameChart.changeBPM(tick, parseFloat(text));
     }
     else {
       let x1 = Math.floor(this.touchHistory.x / cellsize);
       let x2 = Math.floor(x / cellsize);
       let y1 = this.offset + Math.floor((height - this.touchHistory.y) / cellsize);
       let y2 = this.offset + Math.floor((height - y) / cellsize);
-      if (x1 >= 12 || x2 >= 12) return;
+      if (x1 >= 12) return;
       if (y1 == y2) {
+        if (x2 >= 12) return;
         while (GameChart.notes.length <= y1) GameChart.notes.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
         if (x1 == x2) {
           GameChart.notes[y1][x1]++;
@@ -104,7 +110,8 @@ const Editor = {
         }
       }
       else {
-        GameChart.connections.push({ fromTick: y1, fromPlace: x1, toTick: y2, toPlace: x2 });
+        if (x2 >= 12) GameChart.removeConnection(y1, x1);
+        else GameChart.addConnection(y1, x1, y2, x2);
       }
     }
     this.draw();
@@ -158,7 +165,7 @@ setEditorCanvasSize();
 function addNewGame(){
   let name = prompt("Enter the title of new game");
   if(name === null || name.length == 0)return;
-  let description = prompt("Enter the title of new game");
+  let description = prompt("Enter the description of new game");
   if(description === null)description = name;
   savedData.games.push({
     "name":name,
@@ -183,7 +190,7 @@ function saveGameAs(){
     alert("Save canceled");
     return;
   }
-  let description = prompt("Enter the title of new game");
+  let description = prompt("Enter the description of new game");
   if(description === null)description = name;
   Editor.saveAs(name, description);
   localStorage.setItem("NightmareStella", JSON.stringify(savedData));
