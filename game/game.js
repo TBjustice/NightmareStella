@@ -89,7 +89,7 @@ const Game = {
     for(let idx=0;idx<nnotes;idx++){
       const note = this.notes[idx];
       if(note.state != NOTESTATE_NONE)continue;
-      if(Math.abs(time - note.time) < GameSetting.judgeTiming[3]){
+      if(Math.abs(time - note.time) < savedData.settings.judgeTiming[3]){
         let xMin = note.placeModified;
         let xMax = note.placeModified + note.widthModified;
         if(note.widthModified == 1){
