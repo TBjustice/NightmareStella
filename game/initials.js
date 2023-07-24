@@ -60,15 +60,27 @@ const editor_canvas = document.getElementById("editor_canvas");
 
 const main_game = document.getElementById("main_game");
 const canvas = document.getElementById("canvas");
+const judge_display = document.getElementById("judge_display");
 const gametouch_dummyelement = document.getElementById("gametouch_dummyelement");
 
 /** Contains all saved-data, include games and game-settings */
 let savedData = localStorage.getItem("NightmareStella");
 if(savedData !== null)savedData = JSON.parse(savedData);
-else savedData={
-  games:[],
-  settings:{}
-};
+else savedData={ games:[], settings:{} };
+/** Note speed[m/ms] */
+if(!("noteSpeed" in savedData.settings))savedData.settings["noteSpeed"] = 0.050;
+/** Width[portion:0<portion<1] at top of lane */
+if(!("laneUpperWidth" in savedData.settings))savedData.settings["laneUpperWidth"] = 1/7;
+/** Height[portion:0<=portion<=1] of judgement place */
+if(!("laneJudgementPlace" in savedData.settings))savedData.settings["laneJudgementPlace"] = 0.6;
+/** Height[portion:0<=portion<=1] where notes appear */
+if(!("laneAppearPlace" in savedData.settings))savedData.settings["laneAppearPlace"] = 1.0;
+/** Camera beta[deg] */
+if(!("cameraBeta" in savedData.settings))savedData.settings["cameraBeta"] = 28;
+/** judgements[ms] */
+if(!("judgeTiming" in savedData.settings))savedData.settings["judgeTiming"] = [20, 40, 120, 160];
+/** Adjust judgement timing[ms] */
+if(!("judgeDelta" in savedData.settings))savedData.settings["judgeDelta"] = 0.050;
 
 addEventListener("beforeunload", (event) => {
   localStorage.setItem("NightmareStella", JSON.stringify(savedData));

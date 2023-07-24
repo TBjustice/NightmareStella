@@ -1,7 +1,6 @@
 /*
-This file includes
-1. Functions for drawing 3d objects in game.
-   These funtions MUST be independent from other programs (except libraries and initials.js)
+This file includes functions for drawing 3d objects in game.
+These funtions MUST be independent from other programs (except libraries and initials.js)
 */
 
 const painter = new Painter(canvas);
