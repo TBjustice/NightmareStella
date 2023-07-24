@@ -122,8 +122,10 @@ function setGameCanvasSize() {
 window.addEventListener("resize", setGameCanvasSize);
 setGameCanvasSize();
 
-function gameStart(){
-  let notes = [new Note(1000, 0, 3, NOTESKIN_FLICK), new Note(1000, 6, 3, NOTESKIN_FLICK)];//Editor.toNotes();
+function gameStart(id){
+  if(id >= savedData.games.length)return;
+  GameChart.decode(savedData.games[id].notescript);
+  let notes = GameChart.toNotes();
   if(notes.length == 0){
     alert("There are no notes in this game.");
     return;

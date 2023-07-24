@@ -1,6 +1,6 @@
 /*
 This file includes Note function.
-It MUST be independent from other programs (except libraries and initials.js)
+It MUST be independent from other programs (except initials.js)
 */
 
 /**

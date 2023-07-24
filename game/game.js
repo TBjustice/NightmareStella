@@ -1,6 +1,6 @@
 /*
 This file includes Game object.
-It MUST be independent from other programs (except libraries, initials.js and note.js)
+It MUST be independent from other programs (except initials.js and note.js)
 */
 
 const Game = {
