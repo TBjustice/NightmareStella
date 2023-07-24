@@ -130,7 +130,7 @@ const GameChart = {
     for (let i = 0; i< this.BPM.length; i++) {
       if(this.BPM[i].fromTick == tick){
         if(value <= 0) {
-          if(tick != 0)this.connections.splice(i, 1);
+          if(tick != 0)this.BPM.splice(i, 1);
         }
         else this.BPM[i].BPM = value;
         return;
