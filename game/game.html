@@ -21,11 +21,26 @@
   </main>
 
   <main id="main_editor" hidden>
+    <div id="editor_canvas_wrap">
+      <canvas id="editor_canvas"></canvas>
+    </div>
+    <svg id="edit_menu_toggle" viewBox="-50 -50 100 100" width="64" height="64" xmlns="http://www.w3.org/2000/svg" stroke="transparent" onclick="onEditMenuToggle()">
+      <rect x="-40" y="-3" width="80" height="6" rx="3" fill="black"></rect>
+      <rect x="-40" y="-3" width="80" height="6" rx="3" fill="black"></rect>
+      <rect x="-40" y="-3" width="80" height="6" rx="3" fill="black"></rect>
+    </svg>
     <div id="editor_menu">
       <button onclick="saveGame()">Save</button>
       <button onclick="saveGameAs()">Save As</button>
+      <button onclick="onOpenTextIO()">OpenTextIO</button>
     </div>
-    <canvas id="editor_canvas"></canvas>
+    <div id="editor_text_io">
+      <textarea name="" id="editor_text_io_textlabel" cols="30" rows="10"></textarea>
+      <div style="display: flex;">
+        <button onclick="onLoadFromTextIO()">Load</button>
+        <button onclick="onCloseTextIO()">Cancel</button>
+      </div>
+    </div>
   </main>
 
   <main id="main_game" hidden>

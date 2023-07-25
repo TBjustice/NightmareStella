@@ -96,15 +96,19 @@ function setGameCanvasSize() {
   gametouch_dummyelement.style.height = height + "px";
   painter.resizeCanvas(width, height);
   Game.updateCamera();
-
-  editor_canvas.style.width = (width - 80) + "px";
-  editor_canvas.style.height = height + "px";
-  editor_canvas.setAttribute("width", (width-80)  + "px");
-  editor_canvas.setAttribute("height", height + "px");
-  Editor.draw();
 }
 window.addEventListener("resize", setGameCanvasSize);
 setGameCanvasSize()
+
+function setEditorCanvasSize(){
+  let rect = editor_canvas_wrap.getBoundingClientRect();
+  editor_canvas.style.width = (rect.right - rect.left) + "px";
+  editor_canvas.style.height = (rect.bottom - rect.top) + "px";
+  editor_canvas.setAttribute("width", (rect.right - rect.left)  + "px");
+  editor_canvas.setAttribute("height", (rect.bottom - rect.top) + "px");
+  Editor.draw();
+}
+window.addEventListener("resize", setEditorCanvasSize);
 
 
 function gameStart(id){
@@ -112,7 +116,7 @@ function gameStart(id){
   GameChart.decode(savedData.games[id].notescript);
   let notes = GameChart.toNotes();
   if(notes.length == 0){
-    alert("There are no notes in this game.");
+    alert("ノーツが全くないゲームはプレイできません。");
     return;
   }
   main_home.hidden = true;
@@ -135,13 +139,14 @@ function editStart(id) {
   main_home.hidden = true;
   main_editor.hidden = false;
   main_game.hidden = true;
+  setEditorCanvasSize();
   Editor.load(id);
 }
 
 
 function deleteGame(id){
   if(id >= savedData.games.length)return;
-  let a = confirm("Are you sure to delete a project?");
+  let a = confirm("プロジェクトを削除すれば復元は出来ません。プロジェクトを削除してよろしいですか?");
   if(a){
     savedData.games.splice(id, 1);
     updateGameList();
@@ -149,10 +154,10 @@ function deleteGame(id){
 }
 
 function addNewGame(){
-  let name = prompt("Enter the title of new game");
+  let name = prompt("新規ゲームのタイトルを入力してください。（空白は不可）");
   if(name === null || name.length == 0)return;
-  let description = prompt("Enter the description of new game");
-  if(description === null)description = name;
+  let description = prompt("新規ゲームの説明文を入力してください。（空白も可）");
+  if(description === null)return;
   savedData.games.push({
     "name":name,
     "description":description,
@@ -161,3 +166,7 @@ function addNewGame(){
   editStart(savedData.games.length - 1);
 }
 
+function onEditMenuToggle(){
+  if(edit_menu_toggle.classList.contains("active"))edit_menu_toggle.classList.remove("active");
+  else edit_menu_toggle.classList.add("active");
+}

@@ -27,7 +27,8 @@ const Editor = {
   context: null,
   draw: function () {
     const width = editor_canvas.width;
-    const cellsize = (width - 120) / 12;
+    const cellwidth = (width - 120) / 12;
+    const cellheight = cellwidth * 0.8;
     const height = editor_canvas.height;
     const ctx = this.context;
     ctx.clearRect(0, 0, width, height);
@@ -36,12 +37,12 @@ const Editor = {
     ctx.fillStyle = "#aaaaff";
     ctx.fillRect(width - 60, height / 2, 60, height / 2);
     ctx.font = "12px serif";
-    for (let t = 0; t < height / cellsize; t++) {
-      let y = height - cellsize * (t + 1);
+    for (let t = 0; t < height / cellheight; t++) {
+      let y = height - cellheight * (t + 1);
       ctx.fillStyle = "#000000";
       let bpm = GameChart.getBPMSetting(t + this.offset);
-      if(bpm == 0)ctx.fillText("" + ((t + this.offset) / 2), width - 115, y + cellsize / 2);
-      else ctx.fillText("BPM:" + bpm, width - 115, y + cellsize / 2);
+      if(bpm == 0)ctx.fillText("" + ((t + this.offset) / 2), width - 115, y + cellheight / 2);
+      else ctx.fillText("BPM:" + bpm, width - 115, y + cellheight / 2);
       let data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
       if (t + this.offset < GameChart.notes.length) {
         data = GameChart.notes[t + this.offset];
@@ -53,20 +54,20 @@ const Editor = {
         else if (data[i] == 3) ctx.fillStyle = "#ff8888";
         else if (data[i] == 4) ctx.fillStyle = "#8888ff";
         else ctx.fillStyle = "#ffffff";
-        ctx.fillRect(cellsize * i, y, cellsize, cellsize);
-        ctx.strokeRect(cellsize * i, y, cellsize, cellsize);
+        ctx.fillRect(cellwidth * i, y, cellwidth, cellheight);
+        ctx.strokeRect(cellwidth * i, y, cellwidth, cellheight);
       }
     }
 
     ctx.strokeStyle = "#000000";
     for (const connection of GameChart.connections) {
-      let x1 = connection.fromPlace * cellsize;
-      let y1 = height - (connection.fromTick - this.offset) * cellsize;
-      let x2 = connection.toPlace * cellsize;
-      let y2 = height - (connection.toTick - this.offset) * cellsize;
+      let x1 = connection.fromPlace * cellwidth;
+      let y1 = height - (connection.fromTick - this.offset) * cellheight;
+      let x2 = connection.toPlace * cellwidth;
+      let y2 = height - (connection.toTick - this.offset) * cellheight;
       ctx.beginPath();
-      ctx.moveTo(x1 + cellsize / 2, y1 - cellsize / 2);
-      ctx.lineTo(x2 + cellsize / 2, y2 - cellsize / 2);
+      ctx.moveTo(x1 + cellheight / 2, y1 - cellheight / 2);
+      ctx.lineTo(x2 + cellheight / 2, y2 - cellheight / 2);
       ctx.stroke();
     }
   },
@@ -77,7 +78,8 @@ const Editor = {
   },
   touchEnd: function (x, y) {
     const width = editor_canvas.width;
-    const cellsize = (width - 120) / 12;
+    const cellwidth = (width - 120) / 12;
+    const cellheight = cellwidth * 0.8;
     const height = editor_canvas.height;
     if (this.touchHistory.x > width - 60) {
       if (y < height / 2) this.offset++;
@@ -87,14 +89,14 @@ const Editor = {
       if(x < width - 120) return;
       let text = prompt("Enter new bpm. Enter 0 to erase bpm setting.");
       if(text === null)return;
-      let tick = this.offset + Math.floor((height - y) / cellsize);
+      let tick = this.offset + Math.floor((height - y) / cellheight);
       GameChart.changeBPM(tick, parseFloat(text));
     }
     else {
-      let x1 = Math.floor(this.touchHistory.x / cellsize);
-      let x2 = Math.floor(x / cellsize);
-      let y1 = this.offset + Math.floor((height - this.touchHistory.y) / cellsize);
-      let y2 = this.offset + Math.floor((height - y) / cellsize);
+      let x1 = Math.floor(this.touchHistory.x / cellwidth);
+      let x2 = Math.floor(x / cellwidth);
+      let y1 = this.offset + Math.floor((height - this.touchHistory.y) / cellheight);
+      let y2 = this.offset + Math.floor((height - y) / cellheight);
       if (x1 >= 12) return;
       if (y1 == y2) {
         if (x2 >= 12) return;
@@ -122,21 +124,25 @@ Editor.offset = 0;
 
 function onEditorTouchStart(event) {
   event.preventDefault();
-  Editor.touchStart(event.changedTouches[0].pageX - 80, event.changedTouches[0].pageY);
+  let left = editor_canvas.getBoundingClientRect().left;
+  Editor.touchStart(event.changedTouches[0].pageX - left, event.changedTouches[0].pageY);
 }
 function onEditorTouchEnd(event) {
   event.preventDefault();
-  Editor.touchEnd(event.changedTouches[0].pageX - 80, event.changedTouches[0].pageY);
+  let left = editor_canvas.getBoundingClientRect().left;
+  Editor.touchEnd(event.changedTouches[0].pageX - left, event.changedTouches[0].pageY);
 }
 editor_canvas.addEventListener("touchstart", onEditorTouchStart);
 editor_canvas.addEventListener("touchend", onEditorTouchEnd);
 function onEditorMouseDown(event) {
   event.preventDefault();
-  Editor.touchStart(event.pageX - 80, event.pageY);
+  let left = editor_canvas.getBoundingClientRect().left;
+  Editor.touchStart(event.pageX - left, event.pageY);
 }
 function onEditorMouseUp(event) {
   event.preventDefault();
-  Editor.touchEnd(event.pageX - 80, event.pageY);
+  let left = editor_canvas.getBoundingClientRect().left;
+  Editor.touchEnd(event.pageX - left, event.pageY);
 }
 editor_canvas.addEventListener("mousedown", onEditorMouseDown);
 editor_canvas.addEventListener("mouseup", onEditorMouseUp);
@@ -164,4 +170,17 @@ function saveGameAs(){
   main_home.hidden = false;
   main_editor.hidden = true;
   main_game.hidden = true;
+}
+
+function onOpenTextIO(){
+  editor_text_io.style.display = "flex";
+  editor_text_io_textlabel.value = GameChart.encode();
+}
+function onLoadFromTextIO(){
+  editor_text_io.style.display = "none";
+  GameChart.decode(savedData.games[this.target].notescript);
+  Editor.draw();
+}
+function onCloseTextIO(){
+  editor_text_io.style.display = "none";
 }

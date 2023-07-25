@@ -88,7 +88,7 @@ button:hover {
   left: 0;
   right: 0;
   display: grid;
-    grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(12, 1fr);
   gap: 1rem;
   padding: 1rem;
   overflow-y: auto;
@@ -166,22 +166,72 @@ button:hover {
 
 /* Editor */
 
+#editor_canvas_wrap{
+  position: absolute;
+  right: 0;
+  width: 700px;
+  height: 100%;
+}
 #editor_menu {
   position: absolute;
-  width: 80px;
+  left: 0;
+  right: 700px;
   height: 100%;
-  display: flex;
-  flex-flow: column;
-  gap: 0.5rem;
+  background: #dddddd;
+}
+#edit_menu_toggle{
+  position: absolute;
+  display: none;
+  z-index: 1000;
 }
 
-#editor_menu button {
-  padding: 0.5rem 0;
+@media (max-width: 1000px) {
+  #editor_canvas_wrap {
+    width: 100%;
+    right: 0;
+  }
+  #edit_menu_toggle{
+    background: #fff;
+    display: block;
+  }
+  #edit_menu_toggle > rect:first-child{
+    transform: translateY(-30%);
+  }
+  #edit_menu_toggle > rect:last-child{
+    transform: translateY(+30%);
+  }
+  #edit_menu_toggle.active > rect:first-child{
+    transform: rotateZ(45deg)
+  }
+  #edit_menu_toggle.active > rect:nth-child(2){
+    transform: scaleX(0)
+  }
+  #edit_menu_toggle.active > rect:last-child{
+    transform: rotateZ(-45deg)
+  }
+  #editor_menu {
+    padding-top: 72px;
+    left: 0;
+    width: 100%;
+    display: none;
+  }
+  #edit_menu_toggle.active + #editor_menu {
+    display: block;
+  }
 }
 
 #editor_canvas {
   position: absolute;
-  left: 80px;
+}
+
+#editor_text_io{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  flex-flow: column;
+  justify-content: center;
 }
 
 /* Game */

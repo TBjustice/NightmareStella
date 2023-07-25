@@ -112,7 +112,7 @@ const GameChart = {
           let connectPlace=null;
           for (const connection of this.connections) {
             let toPlace=connection.toPlace;
-            if(connection.fromTick==t && place <= connection.fromPlace && connection.fromPlace < i){
+            if(connection.fromTick==t && place <= connection.fromPlace && connection.fromPlace <= i){
               if(connection.toTick >= this.notes.length || this.notes[connection.toTick][toPlace] == 0) break; //Error!
               while(toPlace != 0 && this.notes[connection.toTick][toPlace - 1] == this.notes[connection.toTick][toPlace])toPlace--;
               connectTime=timelut[connection.toTick];

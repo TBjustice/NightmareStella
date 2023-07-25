@@ -56,7 +56,11 @@ const main_home = document.getElementById("main_home");
 const game_list = document.getElementById("game_list");
 
 const main_editor = document.getElementById("main_editor");
+const editor_canvas_wrap = document.getElementById("editor_canvas_wrap");
 const editor_canvas = document.getElementById("editor_canvas");
+const edit_menu_toggle = document.getElementById("edit_menu_toggle");
+const editor_text_io = document.getElementById("editor_text_io");
+const editor_text_io_textlabel = document.getElementById("editor_text_io_textlabel");
 
 const main_game = document.getElementById("main_game");
 const canvas = document.getElementById("canvas");
