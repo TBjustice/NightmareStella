@@ -178,7 +178,7 @@ function onOpenTextIO(){
 }
 function onLoadFromTextIO(){
   editor_text_io.style.display = "none";
-  GameChart.decode(savedData.games[this.target].notescript);
+  GameChart.decode(editor_text_io_textlabel.value);
   Editor.draw();
 }
 function onCloseTextIO(){
