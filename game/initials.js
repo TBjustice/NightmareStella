@@ -62,6 +62,7 @@ const main_game = document.getElementById("main_game");
 const canvas = document.getElementById("canvas");
 const judge_display = document.getElementById("judge_display");
 const gametouch_dummyelement = document.getElementById("gametouch_dummyelement");
+const toggle_fullscreen = document.getElementById("toggle_fullscreen");
 
 /** Contains all saved-data, include games and game-settings */
 let savedData = localStorage.getItem("NightmareStella");

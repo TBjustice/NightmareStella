@@ -60,9 +60,12 @@ function updateGameList(){
   for(let i=0;i<savedData.games.length;i++){
     let game = savedData.games[i]
     text += "<div>";
-    text+="<header>" + game.name + "</header>";
+    text+="<header>";
+    text += "<div class=\"gamename\">"+game.name+"</div>";
+    text += "<div class=\"delbutton\" onclick=\"deleteGame(" + i + ")\">×</div>";
+    text+="</header>";
     text+="<p>"+game.description+"</p>";
-    text+="<div>";
+    text+="<div class=\"buttons\">";
     text+="<button onclick=\"editStart(" + i + ")\">Edit</button>";
     text+="<button onclick=\"gameStart(" + i + ")\">Play</button>";
     text+="</div>";
@@ -72,44 +75,19 @@ function updateGameList(){
 }
 updateGameList();
 
-function gameloop() {
-  if(Game.draw()) requestAnimationFrame(gameloop);
-  else gameEnd();
-}
-
-function onTouchStart(event){
-  event.preventDefault();
-  const changes = event.changedTouches;
-  for(const change of changes){
-    const id=change.identifier;
-    const x = change.pageX / painter.framesize[0];
-    const y = (painter.framesize[1] - change.pageY) / painter.framesize[0];
-    Game.onTouchStart(id, x, y);
+function onToggleFullscreen(){
+  if(toggle_fullscreen.checked){
+    if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen();
+    else if(document.documentElement.webkitRequestFullscreen)document.documentElement.webkitRequestFullscreen();
+    else if(document.documentElement.msRequestFullscreen)document.documentElement.msRequestFullscreen();
+    else alert("Fullscreen not supported!");
+  }
+  else{
+    if(document.exitFullscreen)document.exitFullscreen();
+    else if(document.webkitExitFullscreen)document.webkitExitFullscreen();
+    else if(document.msExitFullscreen)document.msExitFullscreen();
   }
 }
-function onTouchMove(event){
-  event.preventDefault();
-  const changes = event.changedTouches;
-  for(const change of changes){
-    const id=change.identifier;
-    const x = change.pageX / painter.framesize[0];
-    const y = (painter.framesize[1] - change.pageY) / painter.framesize[0];
-    Game.onTouchMove(id, x, y);
-  }
-}
-function onTouchEnd(event){
-  event.preventDefault();
-  const changes = event.changedTouches;
-  for(const change of changes){
-    const id=change.identifier;
-    const x = change.pageX / painter.framesize[0];
-    const y = (painter.framesize[1] - change.pageY) / painter.framesize[0];
-    Game.onTouchEnd(id, x, y);
-  }
-}
-gametouch_dummyelement.addEventListener("touchstart", onTouchStart);
-gametouch_dummyelement.addEventListener("touchmove", onTouchMove);
-gametouch_dummyelement.addEventListener("touchend", onTouchEnd);
 
 function setGameCanvasSize() {
   let width = window.innerWidth;
@@ -118,9 +96,16 @@ function setGameCanvasSize() {
   gametouch_dummyelement.style.height = height + "px";
   painter.resizeCanvas(width, height);
   Game.updateCamera();
+
+  editor_canvas.style.width = (width - 80) + "px";
+  editor_canvas.style.height = height + "px";
+  editor_canvas.setAttribute("width", (width-80)  + "px");
+  editor_canvas.setAttribute("height", height + "px");
+  Editor.draw();
 }
 window.addEventListener("resize", setGameCanvasSize);
-setGameCanvasSize();
+setGameCanvasSize()
+
 
 function gameStart(id){
   if(id >= savedData.games.length)return;
@@ -144,3 +129,35 @@ function gameEnd(){
   main_editor.hidden = true;
   main_game.hidden = true;
 }
+
+
+function editStart(id) {
+  main_home.hidden = true;
+  main_editor.hidden = false;
+  main_game.hidden = true;
+  Editor.load(id);
+}
+
+
+function deleteGame(id){
+  if(id >= savedData.games.length)return;
+  let a = confirm("Are you sure to delete a project?");
+  if(a){
+    savedData.games.splice(id, 1);
+    updateGameList();
+  }
+}
+
+function addNewGame(){
+  let name = prompt("Enter the title of new game");
+  if(name === null || name.length == 0)return;
+  let description = prompt("Enter the description of new game");
+  if(description === null)description = name;
+  savedData.games.push({
+    "name":name,
+    "description":description,
+    "notescript":"\n\n120:0"
+  });
+  editStart(savedData.games.length - 1);
+}
+

@@ -242,3 +242,42 @@ const Game = {
   }
 }
 Game.initTouchHistory();
+
+function gameloop() {
+  if(Game.draw()) requestAnimationFrame(gameloop);
+  else gameEnd();
+}
+
+function onTouchStart(event){
+  event.preventDefault();
+  const changes = event.changedTouches;
+  for(const change of changes){
+    const id=change.identifier;
+    const x = change.pageX / painter.framesize[0];
+    const y = (painter.framesize[1] - change.pageY) / painter.framesize[0];
+    Game.onTouchStart(id, x, y);
+  }
+}
+function onTouchMove(event){
+  event.preventDefault();
+  const changes = event.changedTouches;
+  for(const change of changes){
+    const id=change.identifier;
+    const x = change.pageX / painter.framesize[0];
+    const y = (painter.framesize[1] - change.pageY) / painter.framesize[0];
+    Game.onTouchMove(id, x, y);
+  }
+}
+function onTouchEnd(event){
+  event.preventDefault();
+  const changes = event.changedTouches;
+  for(const change of changes){
+    const id=change.identifier;
+    const x = change.pageX / painter.framesize[0];
+    const y = (painter.framesize[1] - change.pageY) / painter.framesize[0];
+    Game.onTouchEnd(id, x, y);
+  }
+}
+gametouch_dummyelement.addEventListener("touchstart", onTouchStart);
+gametouch_dummyelement.addEventListener("touchmove", onTouchMove);
+gametouch_dummyelement.addEventListener("touchend", onTouchEnd);

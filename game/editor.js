@@ -141,40 +141,6 @@ function onEditorMouseUp(event) {
 editor_canvas.addEventListener("mousedown", onEditorMouseDown);
 editor_canvas.addEventListener("mouseup", onEditorMouseUp);
 
-// FIXME This should be included in other file
-function editStart(id) {
-  main_home.hidden = true;
-  main_editor.hidden = false;
-  main_game.hidden = true;
-  Editor.load(id);
-}
-
-function setEditorCanvasSize(event) {
-  let width = window.innerWidth;
-  let height = window.innerHeight;
-  editor_canvas.style.width = (width - 80) + "px";
-  editor_canvas.style.height = height + "px";
-  editor_canvas.setAttribute("width", (width-80)  + "px");
-  editor_canvas.setAttribute("height", height + "px");
-  Editor.draw();
-}
-window.addEventListener("resize", setEditorCanvasSize)
-setEditorCanvasSize();
-
-// FIXME This should be included in other file
-function addNewGame(){
-  let name = prompt("Enter the title of new game");
-  if(name === null || name.length == 0)return;
-  let description = prompt("Enter the description of new game");
-  if(description === null)description = name;
-  savedData.games.push({
-    "name":name,
-    "description":description,
-    "notescript":"\n\n120:0"
-  });
-  editStart(savedData.games.length - 1);
-}
-
 function saveGame(){
   Editor.save();
   localStorage.setItem("NightmareStella", JSON.stringify(savedData));

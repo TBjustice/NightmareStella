@@ -1,13 +1,30 @@
+html {
+  font-size: 16px;
+}
+
+@media (max-width: 800px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  html {
+    font-size: 8px;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
 
-body{
+body {
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
-main{
+
+main {
   position: absolute;
   left: 0;
   top: 0;
@@ -16,7 +33,7 @@ main{
   overflow: hidden;
 }
 
-button{
+button {
   appearance: none;
   border: 0;
   border-radius: 5px;
@@ -25,76 +42,114 @@ button{
   padding: 0.5rem 1rem;
   font-size: 1rem;
 }
-button:hover{
+
+button:hover {
   background: #6798fa;
   cursor: pointer;
 }
 
 /* Home */
 
-#main_home{
+#main_home {
   background: #dddddd;
 }
 
-#main_home h1{
-  margin: 0;
+#main_home>header {
+  display: flex;
+  align-items: center;
   height: 4rem;
+  background: rgb(18, 0, 32);
+  justify-content: space-between;
+}
+
+#main_home h1 {
+  margin: 0;
   font-size: 2rem;
-  padding: 0.5rem 1rem;
-  background: rgb(18,0,32);
   color: white;
 }
 
-#game_list{
+#main_home>header>#fullscreen>label {
+  padding: 1.5rem;
+  color: cadetblue;
+}
+
+#main_home>header>#fullscreen>input {
+  display: none;
+}
+
+#main_home>header>#fullscreen>input:checked+label {
+  color: white;
+}
+
+#game_list {
   position: absolute;
   top: 4rem;
   bottom: 0;
   left: 0;
   right: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(12, 1fr);
   gap: 1rem;
   padding: 1rem;
   overflow-y: auto;
 }
-@media (min-width: 800px) {
-  #game_list {
-    grid-template-columns: repeat(12, 1fr);
-  }
-}
 
-#game_list > div{
+#game_list>div {
+  position: relative;
   background: white;
-  box-shadow: 1px 1px 4px 0px rgba(0,0,0,0.5);
+  box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.5);
+    grid-column: span 3;
   height: fit-content;
-  grid-column: span 2;
 }
-@media (min-width: 800px) {
-  #game_list > div {
+@media (max-width: 1200px) {
+  #game_list>div {
     grid-column: span 4;
   }
 }
-@media (min-width: 1200px) {
-  #game_list > div {
-    grid-column: span 3;
+@media (max-width: 800px) {
+  #game_list>div {
+    grid-column: span 6;
+  }
+}
+@media (max-width: 400px) {
+  #game_list>div {
+    grid-column: span 12;
   }
 }
 
-#game_list > div > header{
+
+#game_list>div>header {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background: #0ff;
   text-align: center;
   font-size: 1.5rem;
 }
-#game_list > div > p{
+#game_list>div>header>div.gamename {
+  background: #0ff;
+  text-align: center;
+  font-size: 1.5rem;
+}
+#game_list>div>header>div.delbutton{
+  width: 2rem;
+  height: 2rem;
+  line-height: 2rem;
+  text-align: center;
+}
+
+#game_list>div>p {
   margin: 0.5rem;
 }
-#game_list > div > div{
+
+#game_list>div>div.buttons {
   display: flex;
   justify-content: space-around;
   margin-bottom: 0.5rem;
 }
 
-#add_new_game{
+#add_new_game {
   position: absolute;
   right: 1rem;
   bottom: 1rem;
@@ -111,33 +166,35 @@ button:hover{
 
 /* Editor */
 
-#editor_menu{
+#editor_menu {
   position: absolute;
-  width:80px;
+  width: 80px;
   height: 100%;
   display: flex;
   flex-flow: column;
   gap: 0.5rem;
 }
-#editor_menu button{
+
+#editor_menu button {
   padding: 0.5rem 0;
 }
-#editor_canvas{
+
+#editor_canvas {
   position: absolute;
   left: 80px;
 }
 
 /* Game */
 
-#main_game{
-  background: rgb(18,0,32);
+#main_game {
+  background: rgb(18, 0, 32);
 }
 
-#canvas{
+#canvas {
   position: absolute;
 }
 
-#judge_display{
+#judge_display {
   position: absolute;
   top: 50%;
   width: 100%;
@@ -147,6 +204,6 @@ button:hover{
   font-size: 1.5rem;
 }
 
-#gametouch_dummyelement{
+#gametouch_dummyelement {
   position: absolute;
 }

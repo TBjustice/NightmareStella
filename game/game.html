@@ -8,16 +8,14 @@
 </head>
 <body>
   <main id="main_home">
-    <h1>Nightmare Stella</h1>
-    <div id="game_list">
-      <div>
-        <header>デバッグ用譜面</header>
-        <p>デバッグ用の譜面です。</p>
-        <div>
-          <button onclick="editStart(0)">Edit</button>
-          <button onclick="gameStart(0)">Play</button>
-        </div>
+    <header>
+      <h1>Nightmare Stella</h1>
+      <div id="fullscreen">
+        <input type="checkbox" name="" id="toggle_fullscreen" onclick="onToggleFullscreen()">
+        <label for="toggle_fullscreen">FullScreen</label>
       </div>
+    </header>
+    <div id="game_list">
     </div>
     <div id="add_new_game" onclick="addNewGame()">+</div>
   </main>
@@ -43,7 +41,7 @@
   <script src="note.js"></script>
   <script src="game.js"></script>
   <script src="gamechart.js"></script>
-  <script src="main.js"></script>
   <script src="editor.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
