@@ -47,7 +47,6 @@ const Editor = {
       if (t + this.offset < GameChart.notes.length) {
         data = GameChart.notes[t + this.offset];
       }
-      ctx.strokeStyle = "#000000";
       for (let i = 0; i < 12; i++) {
         if (data[i] == 1) ctx.fillStyle = "#ff0000";
         else if (data[i] == 2) ctx.fillStyle = "#0000ff";
@@ -55,21 +54,27 @@ const Editor = {
         else if (data[i] == 4) ctx.fillStyle = "#8888ff";
         else ctx.fillStyle = "#ffffff";
         ctx.fillRect(cellwidth * i, y, cellwidth, cellheight);
-        ctx.strokeRect(cellwidth * i, y, cellwidth, cellheight);
       }
+      ctx.strokeStyle = "#000000";
+      ctx.beginPath();
+      ctx.moveTo(0, y + cellheight / 2);
+      ctx.lineTo(width - 120, y + cellheight / 2);
+      ctx.stroke();
     }
 
     ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 3;
     for (const connection of GameChart.connections) {
       let x1 = connection.fromPlace * cellwidth;
       let y1 = height - (connection.fromTick - this.offset) * cellheight;
       let x2 = connection.toPlace * cellwidth;
       let y2 = height - (connection.toTick - this.offset) * cellheight;
       ctx.beginPath();
-      ctx.moveTo(x1 + cellheight / 2, y1 - cellheight / 2);
-      ctx.lineTo(x2 + cellheight / 2, y2 - cellheight / 2);
+      ctx.moveTo(x1 + cellwidth / 2, y1 - cellheight / 2);
+      ctx.lineTo(x2 + cellwidth / 2, y2 - cellheight / 2);
       ctx.stroke();
     }
+    ctx.lineWidth = 1;
   },
   touchHistory: { x: 0, y: 0 },
   touchStart: function (x, y) {

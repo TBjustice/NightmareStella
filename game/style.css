@@ -191,7 +191,7 @@ button:hover {
     right: 0;
   }
   #edit_menu_toggle{
-    background: #fff;
+    background: #ddd;
     display: block;
   }
   #edit_menu_toggle > rect:first-child{
@@ -213,10 +213,11 @@ button:hover {
     padding-top: 72px;
     left: 0;
     width: 100%;
-    display: none;
+    transform: translateX(-100%);
+    transition-duration: 500ms;
   }
   #edit_menu_toggle.active + #editor_menu {
-    display: block;
+    transform: translateX(0);
   }
 }
 
