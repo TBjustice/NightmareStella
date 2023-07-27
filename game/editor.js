@@ -177,9 +177,17 @@ function saveGameAs(){
   main_game.hidden = true;
 }
 
-function onOpenTextIO(){
+function onExportTextIO(){
   editor_text_io.style.display = "flex";
+  load_from_text_io.style.display = "none";
   editor_text_io_textlabel.value = GameChart.encode();
+  editor_text_io_header.innerText = "以下のコードを全てコピーして下さい";
+}
+function onImportTextIO(){
+  editor_text_io.style.display = "flex";
+  load_from_text_io.style.display = "block";
+  editor_text_io_textlabel.value = "";
+  editor_text_io_header.innerText = "以下にコードを貼り付けてください";
 }
 function onLoadFromTextIO(){
   editor_text_io.style.display = "none";
