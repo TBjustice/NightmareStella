@@ -61,6 +61,8 @@ const editor_canvas = document.getElementById("editor_canvas");
 const edit_menu_toggle = document.getElementById("edit_menu_toggle");
 const editor_text_io = document.getElementById("editor_text_io");
 const editor_text_io_textlabel = document.getElementById("editor_text_io_textlabel");
+const load_from_text_io = document.getElementById("load_from_text_io");
+const editor_text_io_header = document.getElementById("editor_text_io_header");
 
 const main_game = document.getElementById("main_game");
 const canvas = document.getElementById("canvas");

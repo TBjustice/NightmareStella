@@ -32,13 +32,15 @@
     <div id="editor_menu">
       <button onclick="saveGame()">Save</button>
       <button onclick="saveGameAs()">Save As</button>
-      <button onclick="onOpenTextIO()">OpenTextIO</button>
+      <button onclick="onExportTextIO()">Export</button>
+      <button onclick="onImportTextIO()">Import</button>
     </div>
     <div id="editor_text_io">
+      <header id="editor_text_io_header">Text IO</header>
       <textarea name="" id="editor_text_io_textlabel" cols="30" rows="10"></textarea>
-      <div style="display: flex;">
-        <button onclick="onLoadFromTextIO()">Load</button>
-        <button onclick="onCloseTextIO()">Cancel</button>
+      <div>
+        <button onclick="onCloseTextIO()">Close</button>
+        <button onclick="onLoadFromTextIO()" id="load_from_text_io">Load</button>
       </div>
     </div>
   </main>

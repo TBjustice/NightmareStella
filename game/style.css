@@ -137,6 +137,7 @@ button:hover {
   height: 2rem;
   line-height: 2rem;
   text-align: center;
+  cursor: pointer;
 }
 
 #game_list>div>p {
@@ -226,6 +227,7 @@ button:hover {
 }
 
 #editor_text_io{
+  padding: 1rem;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -233,6 +235,18 @@ button:hover {
   display: none;
   flex-flow: column;
   justify-content: center;
+  background: #ddd;
+  border: 1px solid black;
+}
+#editor_text_io header{
+  text-align: center;
+}
+#editor_text_io textarea{
+  margin: 1rem 0;
+}
+#editor_text_io > div{
+  display: flex;
+  justify-content: space-around;
 }
 
 /* Game */
